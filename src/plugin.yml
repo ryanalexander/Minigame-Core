@@ -1,0 +1,8 @@
+name: Arcade
+version: 1.0
+description: Blockcade Arcade Core
+api-version: 1.13
+main: net.blockcade.Arcade.Main
+commands:
+  mct:
+    description: Map Creator Tools
