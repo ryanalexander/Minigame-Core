@@ -40,6 +40,10 @@
 
 package net.blockcade.Arcade.Utils;
 
+import org.bukkit.block.BlockFace;
+
+import java.util.Hashtable;
+
 public class JavaUtils {
 
     public static String center(String str, int size) {
@@ -55,6 +59,32 @@ public class JavaUtils {
             buff.append(repeatedChar);
         }
         return (buff.toString());
+    }
+
+    public static BlockFace direction(Float heading)
+    {
+        BlockFace strHeading = BlockFace.NORTH;
+        Hashtable<BlockFace, Float> cardinal = new Hashtable<BlockFace, Float>();
+        cardinal.put(BlockFace.NORTH, new Float(0));
+        cardinal.put(BlockFace.NORTH, new Float(45));
+        cardinal.put(BlockFace.EAST, new Float(90));
+        cardinal.put(BlockFace.EAST, new Float(135));
+        cardinal.put(BlockFace.SOUTH, new Float(180));
+        cardinal.put(BlockFace.SOUTH, new Float(225));
+        cardinal.put(BlockFace.WEST, new Float(270));
+        cardinal.put(BlockFace.WEST, new Float(315));
+        cardinal.put(BlockFace.NORTH, new Float(360));
+
+        for (BlockFace key: cardinal.keySet())
+        {
+            Float value = cardinal.get(key);
+            if (Math.abs(heading - value) < 30)
+            {
+                strHeading = key;
+                break;
+            }
+        }
+        return strHeading;
     }
 
 }

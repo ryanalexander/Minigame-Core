@@ -142,7 +142,7 @@ public class playerJoin implements Listener {
                 }
                 break;
             default:
-                e.getPlayer().kickPlayer(Text.format(String.format("&cERROR> &7Failed to join the requested GameCommand. [Game-state: %s]", game.GameState())));
+                e.getPlayer().kickPlayer(Text.format(String.format("&cERROR> &7Failed to join the requested game. [Game-state: %s]", game.GameState())));
                 break;
         }
 

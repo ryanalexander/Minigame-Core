@@ -11,20 +11,6 @@
  *  @since 18/8/2019
  */
 
-/*
- *
- * *
- *  *
- *  * © Stelch Games 2019, distribution is strictly prohibited
- *  *
- *  * Changes to this file must be documented on push.
- *  * Unauthorised changes to this file are prohibited.
- *  *
- *  * @author Ryan Wood
- *  * @since 14/7/2019
- *
- */
-
 package net.blockcade.Arcade;
 
 import net.blockcade.Arcade.Events.*;
@@ -59,13 +45,13 @@ public class Game {
     // TeamManager instance
     private TeamManager teamManager;
 
-    // Minimum players for GameCommand to start (Naturally)
+    // Minimum players for game to start (Naturally)
     private int min_players;
 
-    // Max players the GameCommand will allow
+    // Max players the game will allow
     private int max_players;
 
-    // Handler for GameCommand
+    // Handler for game
     private JavaPlugin handler;
 
     // Block Manager
@@ -77,22 +63,22 @@ public class Game {
     // ScoreboardManager
     private ScoreboardManager scoreboardManager;
 
-    // Default map for GameCommand
+    // Default map for game
     private World map;
 
     // Current gameState
     private GameState gameState;
 
-    // Should the GameCommand autostart
+    // Should the game autostart
     private boolean AutoStart;
 
     /**
-     * @param title       What will the GameCommand be called?
+     * @param title       What will the game be called?
      * @param gameType    Game type from gameType enum
-     * @param min_players Minimum players for GameCommand to start (Naturally)
-     * @param max_players Max players the GameCommand will allow
-     * @param handler     Handler for GameCommand
-     * @param map         Default map for GameCommand
+     * @param min_players Minimum players for game to start (Naturally)
+     * @param max_players Max players the game will allow
+     * @param handler     Handler for game
+     * @param map         Default map for game
      * @since 14/07/2019
      */
     public Game(String title, GameType gameType, int min_players, int max_players, JavaPlugin handler, World map) {
@@ -114,15 +100,16 @@ public class Game {
                 e.remove();
             }
         }
+        handler.getServer().getPluginManager().registerEvents(new ItemDropEvent(this),handler);
         Spectator.initializeSpectating();
         registerEvents();
 
-        // Game registration finished. Now inform all other plugins that GameCommand has Registered
+        // Game registration finished. Now inform all other plugins that game has Registered
         Bukkit.getPluginManager().callEvent(new GameRegisterEvent(this));
     }
 
     /**
-     * @return are to minimum requirements met for GameCommand to start
+     * @return are to minimum requirements met for game to start
      * @since 14/07/2019
      */
     public boolean canStart() {
@@ -145,7 +132,7 @@ public class Game {
     }
 
     /**
-     * @return Max players the GameCommand will allow
+     * @return Max players the game will allow
      * @since 14/07/2019
      */
     public int maxPlayers() {
@@ -153,7 +140,7 @@ public class Game {
     }
 
     /**
-     * @param max_players Max players the GameCommand will allow
+     * @param max_players Max players the game will allow
      * @since 14/07/2019
      */
     public void maxPlayers(int max_players) {
@@ -161,7 +148,7 @@ public class Game {
     }
 
     /**
-     * @return Minimum players for GameCommand to start (Naturally)
+     * @return Minimum players for game to start (Naturally)
      * @since 14/07/2019
      */
     public int minPlayers() {
@@ -169,7 +156,7 @@ public class Game {
     }
 
     /**
-     * @param min_players Minimum players for GameCommand to start (Naturally)
+     * @param min_players Minimum players for game to start (Naturally)
      * @since 14/07/2019
      */
     public void minPlayers(int min_players) {
@@ -177,7 +164,7 @@ public class Game {
     }
 
     /**
-     * @return Handler for GameCommand
+     * @return Handler for game
      * @since 14/07/2019
      */
     public Plugin handler() {
@@ -185,7 +172,7 @@ public class Game {
     }
 
     /**
-     * @return What will the GameCommand be called?
+     * @return What will the game be called?
      * @since 14/07/2019
      */
     public String title() {
@@ -193,7 +180,7 @@ public class Game {
     }
 
     /**
-     * @param title What will the GameCommand be called?
+     * @param title What will the game be called?
      * @since 14/07/2019
      */
     public void title(String title) {
@@ -209,7 +196,7 @@ public class Game {
     }
 
     /**
-     * @param map Set current map for GameCommand
+     * @param map Set current map for game
      * @since 14/07/2019
      */
     public void map(World map) {
@@ -217,7 +204,7 @@ public class Game {
     }
 
     /**
-     * @return Default map for GameCommand
+     * @return Default map for game
      * @since 14/07/2019
      */
     public World map() {
@@ -243,7 +230,7 @@ public class Game {
     }
 
     /**
-     * @return will the GameCommand autostart when requirements are met
+     * @return will the game autostart when requirements are met
      * @since 14/07/2019
      */
     public boolean AutoStart() {
@@ -251,7 +238,7 @@ public class Game {
     }
 
     /**
-     * @param auto_start should the GameCommand autostart when requirements are met
+     * @param auto_start should the game autostart when requirements are met
      * @since 14/07/2019
      */
     public void AutoStart(boolean auto_start) {
@@ -305,12 +292,12 @@ public class Game {
         return super.toString();
     }
 
-    // Main GameCommand start function
+    // Main game start function
     public void start() {
         new start(this);
     }
 
-    // Initialize the GameCommand
+    // Initialize the game
     public void init() {
         new init(this);
     }

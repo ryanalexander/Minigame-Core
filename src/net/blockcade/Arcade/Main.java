@@ -27,6 +27,7 @@
 package net.blockcade.Arcade;
 
 import net.blockcade.Arcade.Commands.mct;
+import net.blockcade.Arcade.Events.ItemDropEvent;
 import net.blockcade.Arcade.Utils.Item;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;

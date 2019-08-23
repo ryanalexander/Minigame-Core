@@ -42,6 +42,7 @@ package net.blockcade.Arcade.Events;
 
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Varables.GameState;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -56,8 +57,14 @@ public class ItemDropEvent implements Listener {
 
     @EventHandler
     public void ItemDropEvent(PlayerDropItemEvent e) {
-        if (game.GameState().equals(GameState.IN_GAME))
+        if (game.GameState().equals(GameState.IN_GAME)) {
+            if(e.getItemDrop().getItemStack().getType().equals(Material.WOODEN_SWORD)||
+            e.getItemDrop().getItemStack().getType().name().toUpperCase().contains("AXE")||
+            e.getItemDrop().getItemStack().getType().name().toUpperCase().contains("SHOVEL")||
+            e.getItemDrop().getItemStack().getType().name().toUpperCase().contains("SHEARS")
+            )
             e.setCancelled(true);
+        }
     }
 
 }

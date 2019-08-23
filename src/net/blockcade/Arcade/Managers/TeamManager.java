@@ -49,6 +49,8 @@ public class TeamManager {
 
     private ArrayList<TeamColors> cantRespawn = new ArrayList<>();
 
+    private int maxTeams = 0;
+
     private HashMap<TeamColors, Integer> scoreboard_lines = new HashMap<>();
 
     private Game game;
@@ -87,10 +89,11 @@ public class TeamManager {
     }
 
     public Location getSpawn(TeamColors team) {
-        Double x = Double.parseDouble(game.handler().getConfig().getString(String.format(("maps.%s.spawn.%s.x"), game.map().getName(), team)));
-        Double y = Double.parseDouble(game.handler().getConfig().getString(String.format(("maps.%s.spawn.%s.y"), game.map().getName(), team)));
-        Double z = Double.parseDouble(game.handler().getConfig().getString(String.format(("maps.%s.spawn.%s.z"), game.map().getName(), team)));
-        Float yaw = Float.parseFloat(game.handler().getConfig().getString(String.format(("maps.%s.spawn.%s.yaw"), game.map().getName(), team)));
+        System.out.println("[Debug] Finding spawn "+String.format(("maps.%s.spawn.%s.x"), game.map().getName(), team.name())+"");
+        Double x = Double.parseDouble(game.handler().getConfig().getString(String.format(("maps.%s.spawn.%s.x"), game.map().getName(), team.name())));
+        Double y = Double.parseDouble(game.handler().getConfig().getString(String.format(("maps.%s.spawn.%s.y"), game.map().getName(), team.name())));
+        Double z = Double.parseDouble(game.handler().getConfig().getString(String.format(("maps.%s.spawn.%s.z"), game.map().getName(), team.name())));
+        Float yaw = Float.parseFloat(game.handler().getConfig().getString(String.format(("maps.%s.spawn.%s.yaw"), game.map().getName(), team.name())));
         Float pitch = Float.parseFloat("0.0");
         return new Location(game.map(), x, y, z, yaw, pitch);
     }
@@ -147,15 +150,23 @@ public class TeamManager {
     }
 
     public boolean getConfigBool(String endpoint, TeamColors team) {
-        return (game.handler().getConfig().getBoolean(String.format(("maps.%s.%s.%s.x"), game.map().getName(), endpoint, team)));
+        return (game.handler().getConfig().getBoolean(String.format(("maps.%s.%s.%s"), game.map().getName(), endpoint, team)));
     }
 
     public String getConfigString(String endpoint, TeamColors team) {
-        return (game.handler().getConfig().getString(String.format(("maps.%s.%s.%s.x"), game.map().getName(), endpoint, team)));
+        return (game.handler().getConfig().getString(String.format(("maps.%s.%s.%s"), game.map().getName(), endpoint, team)));
     }
 
     public Integer getConfigInt(String endpoint, TeamColors team) {
-        return (game.handler().getConfig().getInt(String.format(("maps.%s.%s.%s.x"), game.map().getName(), endpoint, team)));
+        return (game.handler().getConfig().getInt(String.format(("maps.%s.%s.%s"), game.map().getName(), endpoint, team)));
+    }
+
+    public Double getConfigDouble(String endpoint, TeamColors team) {
+        return (game.handler().getConfig().getDouble(String.format(("maps.%s.%s.%s"), game.map().getName(), endpoint, team)));
+    }
+
+    public Long getConfigLong(String endpoint, TeamColors team) {
+        return (game.handler().getConfig().getLong(String.format(("maps.%s.%s.%s"), game.map().getName(), endpoint, team)));
     }
 
     public Location getConfigLocation(String endpoint, TeamColors team) {
@@ -187,6 +198,7 @@ public class TeamManager {
                 t = teams[iterator];
                 setTeam(p, t);
                 iterator++;
+                if(iterator>=(maxTeams))iterator=0;
             } else {
                 iterator = 0;
                 t = teams[iterator];
@@ -195,6 +207,14 @@ public class TeamManager {
             }
             p.sendMessage(Text.format(String.format(lang.GAME_TEAM_ASSIGNED.get(), t.getChatColor() + t.name().toUpperCase())));
         }
+    }
+
+    public int getMaxTeams() {
+        return maxTeams;
+    }
+
+    public void setMaxTeams(int maxTeams) {
+        this.maxTeams = maxTeams;
     }
 
     public HashMap<Player, TeamColors> getPlayers() {

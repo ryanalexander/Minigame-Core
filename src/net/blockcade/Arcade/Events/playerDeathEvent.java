@@ -55,6 +55,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -118,6 +119,7 @@ public class playerDeathEvent implements Listener {
                     if (game.TeamManager().getTeam(killer).equals(game.TeamManager().getTeam(player))) {
                         return;
                     }
+                    killer.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.MASTER,0.5f, 0.5f);
                     player.setHealth(20);
                     e.setCancelled(true);
                     doDeath(player, String.format(messages[0], player.getDisplayName(), resolveDamager(e.getDamager()).getDisplayName()), e.getDamager());
@@ -165,11 +167,13 @@ public class playerDeathEvent implements Listener {
     public void doDeath(Player player, String message, Entity damager) {
         TeamColors team = game.TeamManager().getTeam(player);
         Bukkit.broadcastMessage(Text.format(message));
-        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
         player.setHealth(20);
         player.teleport(game.map().getSpawnLocation());
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, SoundCategory.MASTER,0.5f, 0.5f);
         player.setAllowFlight(true);
         player.setFlying(true);
+        for(PotionEffect effect:player.getActivePotionEffects())
+            player.removePotionEffect(effect.getType());
 
         if (game.TeamManager().getCanRespawn(game.TeamManager().getTeam(player))) {
             Spectator.makeSpectator(player, game);
@@ -200,13 +204,13 @@ public class playerDeathEvent implements Listener {
                         int slot = 0;
                         for (ItemStack is : player.getInventory().getContents()) {
                             slot++;
+                            if (slot > 99) return;
                             if (is == null) continue;
                             is.setType(Material.AIR);
-                            if (slot > 99) return;
                         }
                         player.setHealth(20);
                         player.setLevel(0);
-                        player.getInventory().setArmorContents(game.TeamManager().getArmor(team));
+                        player.getInventory().setArmorContents(game.TeamManager().getArmor(game.TeamManager().getTeam(player)));
                         player.setVelocity(new Vector(0, 0, 0));
                         player.teleport(teamSpawn);
                         player.setGameMode(GameMode.SURVIVAL);

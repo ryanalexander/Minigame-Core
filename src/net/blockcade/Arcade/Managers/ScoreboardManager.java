@@ -29,6 +29,7 @@ package net.blockcade.Arcade.Managers;
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Main;
 import net.blockcade.Arcade.Utils.Text;
+import net.blockcade.Arcade.Varables.TeamColors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -38,6 +39,8 @@ import org.bukkit.scoreboard.Scoreboard;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ScoreboardManager {
     private org.bukkit.scoreboard.ScoreboardManager manager;
@@ -69,10 +72,13 @@ public class ScoreboardManager {
         if (message.length() > this.longest_line) {
             ++this.longest_line;
         }
-
+        String message_raw = message;
+        if(message.length()>=35){
+            message=message.substring(0,35);
+        }
         this.objective.getScore(Text.format(message)).setScore(this.counter);
         --this.counter;
-        this.lines.put(this.counter, Text.format(message));
+        this.lines.put(this.counter, Text.format(message_raw));
         this.update();
         return this.counter;
     }
@@ -121,7 +127,17 @@ public class ScoreboardManager {
 
         while (var1.hasNext()) {
             Map.Entry<Integer, String> line = (Map.Entry) var1.next();
-            String text = line.getValue();
+            String text = line.getValue(); // :ELIMINATED_YELLOW:
+            Matcher m = Pattern.compile(":ELIMINATED_(.*):").matcher(text);
+            if(m.find()){
+                String group = m.group(1);
+                TeamColors team = TeamColors.valueOf(group.toUpperCase());
+                int teamSize = game.TeamManager().getTeamPlayers(team).size();
+                text=text.replaceAll(":ELIMINATED_(.*):",game.TeamManager().getCanRespawn(team)?"&a&l✓":teamSize>=1?"&a"+teamSize:"&c&l✗");
+            }
+            if(text.length()>=35){
+                text=text.substring(0,35);
+            }
             this.objective.getScore(Text.format(text).replaceAll(":player_count:", Bukkit.getServer().getOnlinePlayers().size() + "").replaceAll(":server_name:", Main.networking.serverName)).setScore(line.getKey());
         }
 

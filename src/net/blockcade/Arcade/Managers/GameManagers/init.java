@@ -92,6 +92,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.Map;
@@ -103,20 +104,22 @@ public class init {
 
         game.TeamManager().assignTeams();
 
-        Text.sendAll("&aThe GameCommand has started", Text.MessageType.ACTION_BAR);
+        Text.sendAll("&aThe game has started", Text.MessageType.ACTION_BAR);
 
         for (Map.Entry<Player, TeamColors> payload : game.TeamManager().getPlayers().entrySet()) {
             Player player = payload.getKey();
             player.setLevel(0);
+            player.getEnderChest().clear();
             player.getInventory().clear();
             player.getInventory().setItem(0, new ItemStack(Material.WOODEN_SWORD));
             player.getActivePotionEffects().clear();
             player.setFlying(false);
             player.setAllowFlight(false);
-            player.removePotionEffect(PotionEffectType.INVISIBILITY);
+            for(PotionEffect effect:player.getActivePotionEffects())
+                player.removePotionEffect(effect.getType());
             for (Player p : Bukkit.getOnlinePlayers())
                 p.showPlayer(player);
-            player.getInventory().setArmorContents(game.TeamManager().getArmor(payload.getValue()));
+            player.getInventory().setArmorContents(game.TeamManager().getArmor(game.TeamManager().getTeam(player)));
             player.setGameMode(GameMode.SURVIVAL);
             player.teleport(game.TeamManager().getSpawn(payload.getValue()));
         }

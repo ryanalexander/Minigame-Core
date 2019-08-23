@@ -27,14 +27,14 @@
 package net.blockcade.Arcade.Varables.Lang;
 
 public enum lang {
-    GAME_PLAYER_JOIN("&aJoin> &7Welcome &9%s&7, ( &9%s &7/ &9%s &7) for GameCommand to start"),
+    GAME_PLAYER_JOIN("&aJoin> &7Welcome &9%s&7, ( &9%s &7/ &9%s &7) for game to start"),
     GAME_PLAYER_JOIN_STARTING("&aJoin> &7Welcome &9%s&7, ( &9%s &7/ &9%s &7)"),
 
-    GAME_BEGIN_IN("&aGame> &7The GameCommand will begin in &6%s&7 seconds."),
+    GAME_BEGIN_IN("&aGame> &7The game will begin in &6%s&7 seconds."),
     GAME_TEAM_ASSIGNED("&aGame> &7You have been assigned to &e%s&7 team."),
 
-    GAME_STOPPED_ADMIN("&aGame> &7The GameCommand has been &cstopped&7 by an Administrator."),
-    GAME_FINISHED("&aGame> &7The GameCommand has finished, returning to lobby."),
+    GAME_STOPPED_ADMIN("&aGame> &7The game has been &cstopped&7 by an Administrator."),
+    GAME_FINISHED("&aGame> &7The game has finished, returning to lobby."),
 
     GAME_CORE_DESTROYED("%s&c team's core has been destroyed. They can no longer respawn"),
 

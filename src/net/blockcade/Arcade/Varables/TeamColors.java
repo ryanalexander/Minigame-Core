@@ -46,6 +46,8 @@ public enum TeamColors {
         return this.translation;
     }
 
+    public String formatted() { return this.chatColor+this.name();}
+
     TeamColors(String chatColor, Color Color, String translation) {
         this.color = Color;
         this.chatColor = chatColor;

@@ -33,6 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -133,7 +134,7 @@ public class Item implements Listener {
         /**
          * Ignore armor slots
          */
-        if (e.getSlot() > 99) e.setCancelled(true);
+        if(e.getSlotType() == InventoryType.SlotType.ARMOR) {e.setCancelled(true);}
         for (Map.Entry<Item, click> is : actions.entrySet()) {
             if (is.getKey().spigot().equals(e.getCurrentItem())) {
                 e.setCancelled(true);
