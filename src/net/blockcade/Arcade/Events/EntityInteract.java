@@ -42,7 +42,9 @@ package net.blockcade.Arcade.Events;
 
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Utils.Spectator;
+import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameState;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -112,6 +114,11 @@ public class EntityInteract implements Listener {
     @EventHandler
     public void EntityInteract(PlayerInteractEvent e) {
         if (Spectator.isSpectator(e.getPlayer())) e.setCancelled(true);
+        if(game.hasModule(GameModule.CHEST_BLOCK)){
+            if(e.getClickedBlock().getType().equals(Material.CHEST)){
+
+            }
+        }
     }
 
     @EventHandler

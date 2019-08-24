@@ -135,6 +135,7 @@ public class Item implements Listener {
          * Ignore armor slots
          */
         if(e.getSlotType() == InventoryType.SlotType.ARMOR) {e.setCancelled(true);}
+
         for (Map.Entry<Item, click> is : actions.entrySet()) {
             if (is.getKey().spigot().equals(e.getCurrentItem())) {
                 e.setCancelled(true);

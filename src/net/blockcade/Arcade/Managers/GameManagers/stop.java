@@ -109,8 +109,8 @@ public class stop {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    player.sendMessage(Text.format("&aGame> &7The GameCommand has finished."));
-                    player.kickPlayer("[GAMESTATE] The GameCommand has finished");
+                    player.sendMessage(Text.format("&aGame> &7The game has finished."));
+                    player.kickPlayer("[GAMESTATE] The game has finished");
                 }
                 game.stop(false);
             }

@@ -23,6 +23,7 @@ import net.blockcade.Arcade.Managers.GameManagers.stop;
 import net.blockcade.Arcade.Managers.ScoreboardManager;
 import net.blockcade.Arcade.Managers.TeamManager;
 import net.blockcade.Arcade.Utils.Spectator;
+import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.GameType;
 import org.bukkit.Bukkit;
@@ -31,6 +32,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
 
 import static org.bukkit.entity.EntityType.PLAYER;
 
@@ -72,6 +75,9 @@ public class Game {
     // Should the game autostart
     private boolean AutoStart;
 
+    // Game Modules
+    private ArrayList<GameModule> gameModules;
+
     /**
      * @param title       What will the game be called?
      * @param gameType    Game type from gameType enum
@@ -88,6 +94,7 @@ public class Game {
         this.max_players = max_players;
         this.handler = handler;
         this.map = map;
+        this.gameModules = new ArrayList<>();
         this.entityManager = new EntityManager(this);
         this.teamManager = new TeamManager(this);
         this.blockManager = new BlockManager(this);
@@ -276,6 +283,17 @@ public class Game {
     public BlockManager BlockManager() {
         return this.blockManager;
     }
+
+    /**
+     *
+     * @param module GameModule
+     * @return If the game has the specific module enabled
+     * @since 23/08/2019
+     */
+    public boolean hasModule(GameModule module){
+        return this.gameModules.contains(module);
+    }
+
 
     @Override
     public boolean equals(Object obj) {
