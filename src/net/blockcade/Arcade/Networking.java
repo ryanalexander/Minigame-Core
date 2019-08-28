@@ -109,7 +109,7 @@ public class Networking {
             jedis.set(String.format("SERVER|%s|ipport", uuid), getServer().getIp() + ":" + getServer().getPort());
             jedis.set(String.format("SERVER|%s|type", uuid), plugin.getConfig().getString("server-type"));
             jedis.set(String.format("SERVER|%s|playercount", uuid), getServer().getOnlinePlayers().size() + "");
-            jedis.set(String.format("SERVER|%s|GameCommand", uuid), this.game);
+            jedis.set(String.format("SERVER|%s|game", uuid), this.game);
             jedis.set(String.format("SERVER|%s|state", uuid), this.gameState);
             jedis.set(String.format("SERVER|%s|last_poll", uuid), Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() + "");
         }
