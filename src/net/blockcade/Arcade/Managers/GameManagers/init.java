@@ -94,6 +94,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import java.util.Map;
 
@@ -121,7 +122,9 @@ public class init {
                 p.showPlayer(player);
             player.getInventory().setArmorContents(game.TeamManager().getArmor(game.TeamManager().getTeam(player)));
             player.setGameMode(GameMode.SURVIVAL);
+            player.setVelocity(new Vector(0,0,0));
             player.teleport(game.TeamManager().getSpawn(payload.getValue()));
+            player.setVelocity(new Vector(0,0,0));
         }
         Bukkit.getServer().getPluginManager().callEvent(new GameStartEvent());
 
