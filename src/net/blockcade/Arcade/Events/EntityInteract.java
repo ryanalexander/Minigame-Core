@@ -102,8 +102,8 @@ public class EntityInteract implements Listener {
 
     @EventHandler
     public void EntityDamageEntity(EntityDamageByEntityEvent e) {
-        if (!(e.getEntity() instanceof Player) && Spectator.isSpectator((Player) e.getEntity())) e.setCancelled(true);
-        if (!(e.getDamager() instanceof Player) && Spectator.isSpectator((Player) e.getDamager())) e.setCancelled(true);
+        if (!(e.getEntity() instanceof Player) || Spectator.isSpectator((Player) e.getEntity())) e.setCancelled(true);
+        if (!(e.getDamager() instanceof Player) || Spectator.isSpectator((Player) e.getDamager())) e.setCancelled(true);
     }
 
     @EventHandler

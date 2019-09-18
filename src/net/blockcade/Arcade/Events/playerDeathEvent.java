@@ -177,7 +177,14 @@ public class playerDeathEvent implements Listener {
 
         if (game.TeamManager().getCanRespawn(game.TeamManager().getTeam(player))) {
             Spectator.makeSpectator(player, game);
-
+            ItemStack[] armor=player.getInventory().getArmorContents().clone();
+            int slot = 0;
+            for (ItemStack is : player.getInventory().getContents()) {
+                slot++;
+                if (slot > 99) return;
+                if (is == null) continue;
+                is.setType(Material.AIR);
+            }
             new BukkitRunnable() {
                 int timer = 10;
 
@@ -201,16 +208,8 @@ public class playerDeathEvent implements Listener {
                         Float pitch = Float.parseFloat("0.0");
                         Location teamSpawn = new Location(player.getWorld(), x, y, z, yaw, pitch);
 
-                        int slot = 0;
-                        for (ItemStack is : player.getInventory().getContents()) {
-                            slot++;
-                            if (slot > 99) return;
-                            if (is == null) continue;
-                            is.setType(Material.AIR);
-                        }
                         player.setHealth(20);
                         player.setLevel(0);
-                        player.getInventory().setArmorContents(game.TeamManager().getArmor(game.TeamManager().getTeam(player)));
                         player.setVelocity(new Vector(0, 0, 0));
                         player.teleport(teamSpawn);
                         player.setGameMode(GameMode.SURVIVAL);
@@ -230,6 +229,7 @@ public class playerDeathEvent implements Listener {
                                     cancel();
                                     return;
                                 }
+                                player.getInventory().setArmorContents(armor);
                                 Text.sendMessage(player, String.format("&aInvulnerable for %s second%s", invulnerable / 2, (invulnerable == 1 ? "" : "s")), Text.MessageType.ACTION_BAR);
                                 invulnerable--;
                                 if (invulnerable <= 1) {

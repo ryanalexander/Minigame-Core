@@ -29,6 +29,7 @@ import net.blockcade.Arcade.Varables.GameType;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -103,7 +104,7 @@ public class Game {
         Main.networking.setGame(title());
         // Remove entities
         for (Entity e : map.getEntities()) {
-            if (e.getType() != PLAYER) {
+            if (e.getType() != PLAYER&&e.getType()!= EntityType.ITEM_FRAME) {
                 e.remove();
             }
         }
