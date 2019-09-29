@@ -53,6 +53,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -64,7 +65,7 @@ import java.util.Random;
 
 public class playerDeathEvent implements Listener {
 
-    Game game;
+    private static Game game;
 
     public playerDeathEvent(Game game) {
         this.game = game;
@@ -96,10 +97,40 @@ public class playerDeathEvent implements Listener {
         e.setDeathMessage(null);
         e.setDroppedExp(0);
     }
+    @EventHandler
+    public void EntityDeath(EntityDeathEvent e){
+        switch(e.getEntityType()){
+            case SILVERFISH:
+                e.getEntity().setAI(false);
+                e.getEntity().setCustomNameVisible(false);
+                e.setDroppedExp(0);
+        }
+    }
 
     @EventHandler
     public void EntityDamageEntity(EntityDamageByEntityEvent e) {
         if (!(game.GameState().equals(GameState.IN_GAME))) return;
+
+        if(e.getEntityType().equals(EntityType.SILVERFISH)){
+            if(((LivingEntity)e.getEntity()).getMaxHealth()-e.getDamage()<=1){
+                e.setCancelled(true);
+                String basestr = "";
+                for (int i = 0; i < ((LivingEntity)e.getEntity()).getMaxHealth(); i++) {
+                    basestr += ((i < ((LivingEntity)e.getEntity()).getHealth()-1) ? "&c" : "&c") + "&l&m▌";
+                }
+                e.getEntity().getWorld().playSound(e.getEntity().getLocation(),Sound.ENTITY_SILVERFISH_DEATH,1f,1f);
+                e.getEntity().remove();
+                return;
+            }
+            String basestr = "";
+            for (int i = 0; i < ((LivingEntity)e.getEntity()).getMaxHealth(); i++) {
+                basestr += ((i < ((LivingEntity)e.getEntity()).getHealth()-1) ? "&a" : "&7") + "&l&m▌";
+            }
+            e.getEntity().setCustomName(Text.format(basestr));
+            e.getEntity().setCustomNameVisible(true);
+            e.setCancelled(false);
+            return;
+        }
 
         if (invulnerable.contains(e.getEntity())) {
             e.setCancelled(true);
@@ -124,20 +155,21 @@ public class playerDeathEvent implements Listener {
                     e.setCancelled(true);
                     doDeath(player, String.format(messages[0], player.getDisplayName(), resolveDamager(e.getDamager()).getDisplayName()), e.getDamager());
                 }
+                break;
         }
     }
 
     @EventHandler
     public void EntityDamageEvent(EntityDamageEvent e) {
+        if(e.getEntityType().equals(EntityType.SILVERFISH))return;
         if (e.getCause().equals(EntityDamageEvent.DamageCause.LIGHTNING)) {
             e.setCancelled(true);
+            return;
         }
         if (!(game.GameState().equals(GameState.IN_GAME))) return;
         switch (e.getEntityType()) {
             case PLAYER:
-                if (e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
-                    return;
-                }
+                if (e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK))return;
                 Player player = (Player) e.getEntity();
                 if (Spectator.isSpectator(player)) {
                     e.setCancelled(true);
@@ -164,7 +196,7 @@ public class playerDeathEvent implements Listener {
     }
 
     @EventHandler
-    public void doDeath(Player player, String message, Entity damager) {
+    public static void doDeath(Player player, String message, Entity damager) {
         TeamColors team = game.TeamManager().getTeam(player);
         Bukkit.broadcastMessage(Text.format(message));
         player.setHealth(20);
@@ -183,7 +215,7 @@ public class playerDeathEvent implements Listener {
                 slot++;
                 if (slot > 99) return;
                 if (is == null) continue;
-                is.setType(Material.AIR);
+                player.getInventory().remove(is);
             }
             new BukkitRunnable() {
                 int timer = 10;
@@ -220,7 +252,7 @@ public class playerDeathEvent implements Listener {
 
                         God(player, true);
                         new BukkitRunnable() {
-                            int invulnerable = 10;
+                            int invulnerable = 8;
 
                             @Override
                             public void run() {
@@ -242,6 +274,7 @@ public class playerDeathEvent implements Listener {
             }.runTaskTimer(game.handler(), 0L, 10L);
         } else {
             Text.sendMessage(player, "&cEliminated", Text.MessageType.TITLE);
+            Text.sendMessage(player,"&fYou may no longer respawn", Text.MessageType.SUBTITLE);
             game.TeamManager().doEliminatePlayer(team, player);
             Spectator.makeSpectator(player, game);
         }

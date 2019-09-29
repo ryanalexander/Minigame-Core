@@ -41,8 +41,11 @@
 package net.blockcade.Arcade.Events;
 
 import net.blockcade.Arcade.Game;
+import net.blockcade.Arcade.Managers.EventManager.PlayerDeathEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+
+import java.util.Objects;
 
 public class PlayerMoveEvent implements Listener {
 
@@ -54,7 +57,9 @@ public class PlayerMoveEvent implements Listener {
 
     @EventHandler
     public void onMove(org.bukkit.event.player.PlayerMoveEvent e) {
-
+        if(Objects.requireNonNull(e.getTo()).getY()<=1){
+            playerDeathEvent.doDeath(e.getPlayer(),"No message",null);
+        }
         /*
         if (Main.GameCommand.invis_players.containsKey(e.getPlayer())) {
             Main.GameCommand.invis_players.get(e.getPlayer()).teleport(e.getPlayer());

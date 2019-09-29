@@ -30,12 +30,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 
+import static org.bukkit.entity.EntityType.ITEM_FRAME;
 import static org.bukkit.entity.EntityType.PLAYER;
 
 public class Game {
@@ -105,6 +107,7 @@ public class Game {
         // Remove entities
         for (Entity e : map.getEntities()) {
             if (e.getType() != PLAYER&&e.getType()!= EntityType.ITEM_FRAME) {
+                if(e.getType().equals(ITEM_FRAME)){((ItemFrame)e).setItem(null);continue;}
                 e.remove();
             }
         }

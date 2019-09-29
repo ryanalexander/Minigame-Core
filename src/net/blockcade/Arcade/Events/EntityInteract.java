@@ -95,9 +95,7 @@ public class EntityInteract implements Listener {
 
     @EventHandler
     public void onSmelt(FurnaceSmeltEvent e) {
-        if (!(game.GameState().equals(GameState.IN_GAME))) {
-            e.setCancelled(true);
-        }
+        if (!(game.GameState().equals(GameState.IN_GAME)))e.setCancelled(true);
     }
 
     @EventHandler
@@ -123,6 +121,7 @@ public class EntityInteract implements Listener {
 
     @EventHandler
     public void EntityInteractEvent(PlayerInteractEntityEvent e) {
+        if(e.getRightClicked().getType().equals(EntityType.SILVERFISH)){e.setCancelled(false);return;}
         if (Spectator.isSpectator(e.getPlayer())) e.setCancelled(true);
         if (e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)) e.setCancelled(true);
         if (game.EntityManager().hasFunction(e.getRightClicked())) {

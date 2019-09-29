@@ -34,6 +34,7 @@ import net.blockcade.Arcade.Varables.Lang.lang;
 import net.minecraft.server.v1_14_R1.EntityTNTPrimed;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftTNTPrimed;
@@ -89,6 +90,7 @@ public class blockPlace implements Listener {
             if (e.getBlock().getType() == Material.TNT) {
                 e.getBlock().setType(Material.AIR);
                 TNTPrimed tnt = (TNTPrimed) e.getBlock().getLocation().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
+                tnt.setVelocity(null);
                 EntityTNTPrimed nmsTNT = ((CraftTNTPrimed) tnt).getHandle();
                 try {
                     Field sourceField = EntityTNTPrimed.class.getDeclaredField("source");
@@ -131,11 +133,13 @@ public class blockPlace implements Listener {
 
     @EventHandler
     public void tntExplode(EntityExplodeEvent e) {
+        e.setYield(0);
         if (e.isCancelled()) return;
         for (Block b : e.blockList()) {
             if (game.BlockManager().canBreakBlock(b.getLocation())) {
                 game.BlockManager().update(b.getLocation(), b.getType(), b.getBlockData());
                 b.setType(Material.AIR);
+                b.getLocation().getWorld().spawnParticle(Particle.BLOCK_DUST,b.getLocation(),2);
             }
         }
         e.setCancelled(true);
