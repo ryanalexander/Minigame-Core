@@ -44,6 +44,7 @@ import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Main;
 import net.blockcade.Arcade.Utils.Text;
 import net.blockcade.Arcade.Varables.GameState;
+import net.blockcade.Arcade.Varables.GameType;
 import net.blockcade.Arcade.Varables.TeamColors;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -80,28 +81,30 @@ public class stop {
     }
 
     public void doFinishGame(Game game, boolean stop) {
-        TeamColors winner = game.TeamManager().getActive_teams().get(0);
-        Bukkit.broadcastMessage(Text.format(String.format("&eCongratulations to %s&e team! You won!", game.TeamManager().getTeamColor(winner) + winner)));
-        for (HashMap.Entry<Player, TeamColors> ent : game.TeamManager().getPlayers().entrySet()) {
-            if (ent.getValue().equals(winner)) {
-                //Text.sendMessage(ent.getKey(),"&6VICTORY", Text.MessageType.TITLE);
-                Location loc = ent.getKey().getLocation();
-                Firework fw = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
-                FireworkMeta fwm = fw.getFireworkMeta();
+        if (game.GameType().equals(GameType.ELIMINATE)||game.GameType().equals(GameType.DESTROY)) {
+            TeamColors winner = game.TeamManager().getActive_teams().get(0);
+            Bukkit.broadcastMessage(Text.format(String.format("&eCongratulations to %s&e team! You won!", game.TeamManager().getTeamColor(winner) + winner)));
+            for (HashMap.Entry<Player, TeamColors> ent : game.TeamManager().getPlayers().entrySet()) {
+                if (ent.getValue().equals(winner)) {
+                    //Text.sendMessage(ent.getKey(),"&6VICTORY", Text.MessageType.TITLE);
+                    Location loc = ent.getKey().getLocation();
+                    Firework fw = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+                    FireworkMeta fwm = fw.getFireworkMeta();
 
-                fwm.setPower(2);
-                fwm.addEffect(FireworkEffect.builder().withColor(Color.LIME).flicker(true).build());
+                    fwm.setPower(2);
+                    fwm.addEffect(FireworkEffect.builder().withColor(Color.LIME).flicker(true).build());
 
-                fw.setFireworkMeta(fwm);
-                fw.detonate();
+                    fw.setFireworkMeta(fwm);
+                    fw.detonate();
 
-                for (int i = 0; i < 24; i++) {
-                    Firework fw2 = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
-                    fw2.setFireworkMeta(fwm);
+                    for (int i = 0; i < 24; i++) {
+                        Firework fw2 = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+                        fw2.setFireworkMeta(fwm);
+                    }
+                } else {
+                    Text.sendMessage(ent.getKey(), "&cYou Lose", Text.MessageType.TITLE);
+                    Text.sendMessage(ent.getKey(), "&aBetter luck next time", Text.MessageType.SUBTITLE);
                 }
-            } else {
-                Text.sendMessage(ent.getKey(), "&cYou Lose", Text.MessageType.TITLE);
-                Text.sendMessage(ent.getKey(), "&aBetter luck next time", Text.MessageType.SUBTITLE);
             }
         }
 

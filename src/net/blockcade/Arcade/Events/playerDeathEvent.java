@@ -73,14 +73,14 @@ public class playerDeathEvent implements Listener {
 
     private static ArrayList<Entity> invulnerable = new ArrayList<>();
 
-    private String[] messages = new String[]{
+    public static String[] messages = new String[]{
             "%s&7 has been slain by %s",
             "%s&7 has been clapped by %s",
             "%s&7 has been wasted by %s",
             "%s&7 has been rekt by %s"
     };
 
-    private String[] fall = new String[]{
+    public static String[] fall = new String[]{
             "%s&7 fell and hit their head",
             "&7Balance is not %s&7's strong point",
             "%s&7 didn't notice the edge",
