@@ -44,7 +44,6 @@ import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Utils.Spectator;
 import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameState;
-import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -57,6 +56,9 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+
+import static net.blockcade.Arcade.Varables.GameModule.NO_HUNGER;
+import static net.blockcade.Arcade.Varables.GameModule.NO_SMELTING;
 
 public class EntityInteract implements Listener {
 
@@ -94,28 +96,23 @@ public class EntityInteract implements Listener {
     }
 
     @EventHandler
-    public void onSmelt(FurnaceSmeltEvent e) {
-        if (!(game.GameState().equals(GameState.IN_GAME)))e.setCancelled(true);
+    public void onSmelt(FurnaceSmeltEvent e) {if(!game.hasModule(NO_SMELTING)){return;}if (!(game.GameState().equals(GameState.IN_GAME)))e.setCancelled(true);
     }
 
     @EventHandler
     public void EntityDamageEntity(EntityDamageByEntityEvent e) {
         if (!(e.getEntity() instanceof Player) || Spectator.isSpectator((Player) e.getEntity())) e.setCancelled(true);
-        if (!(e.getDamager() instanceof Player) || Spectator.isSpectator((Player) e.getDamager())) e.setCancelled(true);
     }
 
     @EventHandler
     public void food(FoodLevelChangeEvent e) {
-        e.setCancelled(true);
+        if(!game.hasModule(NO_HUNGER)){return;}e.setCancelled(true);
     }
 
     @EventHandler
     public void EntityInteract(PlayerInteractEvent e) {
         if (Spectator.isSpectator(e.getPlayer())) e.setCancelled(true);
         if(game.hasModule(GameModule.CHEST_BLOCK)){
-            if(e.getClickedBlock().getType().equals(Material.CHEST)){
-
-            }
         }
     }
 

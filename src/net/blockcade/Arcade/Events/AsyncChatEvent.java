@@ -37,6 +37,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import static net.blockcade.Arcade.Varables.GameModule.CHAT_MANAGER;
+import static net.blockcade.Arcade.Varables.GameModule.TEAMS;
+
 public class AsyncChatEvent implements Listener {
 
     Game game;
@@ -47,6 +50,7 @@ public class AsyncChatEvent implements Listener {
 
     @EventHandler
     public void ChatEvent(AsyncPlayerChatEvent e) {
+        if(!game.hasModule(CHAT_MANAGER))return;
         e.setCancelled(true);
         if (game.GameState() == GameState.IN_GAME) {
             if (Spectator.isSpectator(e.getPlayer())) {
@@ -55,8 +59,12 @@ public class AsyncChatEvent implements Listener {
                 }
                 return;
             }
-            TeamColors team = game.TeamManager().getTeam(e.getPlayer());
-            Bukkit.broadcastMessage(Text.format(String.format("&7%s&7 | &e%s&7: %s", TeamColors.valueOf(team.toString().toUpperCase()).getChatColor() + team.toString().toUpperCase(), e.getPlayer().getName(), e.getMessage())));
+            if(game.hasModule(TEAMS)){
+                TeamColors team = game.TeamManager().getTeam(e.getPlayer());
+                Bukkit.broadcastMessage(Text.format(String.format("&7%s&7 | &e%s&7: %s", TeamColors.valueOf(team.toString().toUpperCase()).getChatColor() + team.toString().toUpperCase(), e.getPlayer().getName(), e.getMessage())));
+            }else {
+                Bukkit.broadcastMessage(Text.format(String.format("&e%s&7: %s", e.getPlayer().getName(), e.getMessage())));
+            }
         } else {
             Bukkit.broadcastMessage(Text.format(String.format("&e%s&7: %s", e.getPlayer().getDisplayName(), e.getMessage())));
         }

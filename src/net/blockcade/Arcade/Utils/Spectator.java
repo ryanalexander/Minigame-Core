@@ -74,8 +74,6 @@ public class Spectator implements Listener {
         player.setHealth(20);
         player.setFoodLevel(20);
         player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000 * 10, 1));
-        player.getInventory().setArmorContents(null);
-        player.getInventory().clear();
 
         for (Player p : Bukkit.getOnlinePlayers())
             p.hidePlayer(player);

@@ -51,7 +51,7 @@ public class GameRegisterEvent implements Listener {
 
         Game game = e.getGame();
 
-        System.out.println(String.format("[API] The GameCommand %s has been resisted, hooked correctly.", game.GameType()));
+        System.out.println(String.format("[API] The game %s has been registered, hooked correctly.", game.GameType()));
 
     }
 }

@@ -29,6 +29,7 @@ package net.blockcade.Arcade.Managers;
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Main;
 import net.blockcade.Arcade.Utils.Text;
+import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.TeamColors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -52,6 +53,7 @@ public class ScoreboardManager {
     private int counter = 32;
     private String payload = " ";
     private int payload_count = 1;
+    private PlayerManager playerManager;
     private Game game;
 
     public ScoreboardManager(String name, Game game) {
@@ -127,18 +129,24 @@ public class ScoreboardManager {
 
         while (var1.hasNext()) {
             Map.Entry<Integer, String> line = (Map.Entry) var1.next();
-            String text = line.getValue(); // :ELIMINATED_YELLOW:
-            Matcher m = Pattern.compile(":ELIMINATED_(.*):").matcher(text);
-            if(m.find()){
-                String group = m.group(1);
-                TeamColors team = TeamColors.valueOf(group.toUpperCase());
-                int teamSize = game.TeamManager().getTeamPlayers(team).size();
-                text=text.replaceAll(":ELIMINATED_(.*):",game.TeamManager().getCanRespawn(team)?"&a&l✓":teamSize>=1?"&a"+teamSize:"&c&l✗");
+            String text = line.getValue();
+            if(game.hasModule(GameModule.TEAMS)) {
+                Matcher m = Pattern.compile(":ELIMINATED_(.*):").matcher(text);
+                if (m.find()) {
+                    String group = m.group(1);
+                    TeamColors team = TeamColors.valueOf(group.toUpperCase());
+                    int teamSize = game.TeamManager().getTeamPlayers(team).size();
+                    text = text.replaceAll(":ELIMINATED_(.*):", game.TeamManager().getCanRespawn(team) ? "&a&l✓" : teamSize >= 1 ? "&a" + teamSize : "&c&l✗");
+                }
             }
+
             if(text.length()>=35){
                 text=text.substring(0,35);
             }
-            this.objective.getScore(Text.format(text).replaceAll(":player_count:", Bukkit.getServer().getOnlinePlayers().size() + "").replaceAll(":server_name:", Main.networking.serverName)).setScore(line.getKey());
+            this.objective.getScore(Text.format(text)
+                    .replaceAll(":player_count:", Bukkit.getServer().getOnlinePlayers().size() + "")
+                    .replaceAll(":server_name:", Main.networking.serverName)
+            ).setScore(line.getKey());
         }
 
     }

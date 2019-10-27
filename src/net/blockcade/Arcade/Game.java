@@ -14,14 +14,11 @@
 package net.blockcade.Arcade;
 
 import net.blockcade.Arcade.Events.*;
-import net.blockcade.Arcade.Managers.BlockManager;
-import net.blockcade.Arcade.Managers.EntityManager;
+import net.blockcade.Arcade.Managers.*;
 import net.blockcade.Arcade.Managers.EventManager.GameRegisterEvent;
 import net.blockcade.Arcade.Managers.GameManagers.init;
 import net.blockcade.Arcade.Managers.GameManagers.start;
 import net.blockcade.Arcade.Managers.GameManagers.stop;
-import net.blockcade.Arcade.Managers.ScoreboardManager;
-import net.blockcade.Arcade.Managers.TeamManager;
 import net.blockcade.Arcade.Utils.Spectator;
 import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameState;
@@ -82,6 +79,7 @@ public class Game {
     private ArrayList<GameModule> gameModules;
 
     /**
+     * Initialize Game
      * @param title       What will the game be called?
      * @param gameType    Game type from gameType enum
      * @param min_players Minimum players for game to start (Naturally)
@@ -114,12 +112,14 @@ public class Game {
         handler.getServer().getPluginManager().registerEvents(new ItemDropEvent(this),handler);
         Spectator.initializeSpectating();
         registerEvents();
+        updateGamerules();
 
         // Game registration finished. Now inform all other plugins that game has Registered
         Bukkit.getPluginManager().callEvent(new GameRegisterEvent(this));
     }
 
     /**
+     * Minimum requirements for game to start naturally requires {@link GameModule#START_MECHANISM}
      * @return are to minimum requirements met for game to start
      * @since 14/07/2019
      */
@@ -135,6 +135,7 @@ public class Game {
     }
 
     /**
+     * Get GameType
      * @return Game type from gameType enum
      * @since 14/07/2019
      */
@@ -143,6 +144,7 @@ public class Game {
     }
 
     /**
+     * Get Max players the game will allow
      * @return Max players the game will allow
      * @since 14/07/2019
      */
@@ -151,6 +153,7 @@ public class Game {
     }
 
     /**
+     * Set Max players the game will allow
      * @param max_players Max players the game will allow
      * @since 14/07/2019
      */
@@ -159,6 +162,7 @@ public class Game {
     }
 
     /**
+     * Get Minimum players for game to start (Naturally)
      * @return Minimum players for game to start (Naturally)
      * @since 14/07/2019
      */
@@ -167,6 +171,7 @@ public class Game {
     }
 
     /**
+     * Set Minimum players for game to start (Naturally)
      * @param min_players Minimum players for game to start (Naturally)
      * @since 14/07/2019
      */
@@ -175,6 +180,7 @@ public class Game {
     }
 
     /**
+     * JavaPlugin for the Game
      * @return Handler for game
      * @since 14/07/2019
      */
@@ -183,6 +189,7 @@ public class Game {
     }
 
     /**
+     * Get Game Name
      * @return What will the game be called?
      * @since 14/07/2019
      */
@@ -191,6 +198,7 @@ public class Game {
     }
 
     /**
+     * Set Game Name
      * @param title What will the game be called?
      * @since 14/07/2019
      */
@@ -199,15 +207,18 @@ public class Game {
     }
 
     /**
+     * Set Game Type {@link GameType}
      * @param gameType Game type from gameType enum
      * @since 14/07/2019
      */
     public void GameType(GameType gameType) {
         this.gameType = gameType;
+        updateGamerules();
     }
 
     /**
-     * @param map Set current map for game
+     * Set World the game will operate in
+     * @param map Set current map for game {@link World}
      * @since 14/07/2019
      */
     public void map(World map) {
@@ -215,6 +226,7 @@ public class Game {
     }
 
     /**
+     * Get World the game will operate in
      * @return Default map for game
      * @since 14/07/2019
      */
@@ -223,6 +235,7 @@ public class Game {
     }
 
     /**
+     * Get current GameState
      * @return fetch current GameState
      * @since 14/07/2019
      */
@@ -231,6 +244,7 @@ public class Game {
     }
 
     /**
+     * Set GameState {@link GameState}
      * @param gameState from GameState enum, which gameState shall be set
      * @see GameState for options
      * @since 14/07/2019
@@ -241,6 +255,7 @@ public class Game {
     }
 
     /**
+     * Get weather the game will start naturally requires {@link GameModule#START_MECHANISM}
      * @return will the game autostart when requirements are met
      * @since 14/07/2019
      */
@@ -249,6 +264,7 @@ public class Game {
     }
 
     /**
+     * Set if the game should start naturally
      * @param auto_start should the game autostart when requirements are met
      * @since 14/07/2019
      */
@@ -257,6 +273,7 @@ public class Game {
     }
 
     /**
+     * Get TeamManager instance {@link TeamManager} requires {@link GameModule#TEAMS}
      * @return Game instance of TeamManager
      * @since 14/07/2019
      */
@@ -265,6 +282,7 @@ public class Game {
     }
 
     /**
+     * Get ScoreboardManager instance {@link ScoreboardManager}
      * @return Game instance of ScoreboardManager
      * @since 16/07/2019
      */
@@ -273,6 +291,7 @@ public class Game {
     }
 
     /**
+     * Get EntityManager instance {@link EntityManager}
      * @return Game instance of EntityManager
      * @since 14/07/2019
      */
@@ -281,6 +300,7 @@ public class Game {
     }
 
     /**
+     * Get BlockManager instance {@link BlockManager} requires {@link GameModule#BLOCK_PLACEMENT} and {@link GameModule#BLOCK_ROLLBACK}
      * @return BlockManager instance
      * @since 14/07/2019
      */
@@ -289,7 +309,7 @@ public class Game {
     }
 
     /**
-     *
+     * Check if {@link GameModule} is enabled
      * @param module GameModule
      * @return If the game has the specific module enabled
      * @since 23/08/2019
@@ -297,6 +317,8 @@ public class Game {
     public boolean hasModule(GameModule module){
         return this.gameModules.contains(module);
     }
+
+    public void setModule(GameModule module, boolean state){if(state){if(!this.gameModules.contains(module)){this.gameModules.add(module);}}else{if(!this.gameModules.contains(module)){this.gameModules.remove(module);}}}
 
 
     @Override
@@ -343,5 +365,29 @@ public class Game {
         pm.registerEvents(new playerJoin(this), handler);
         pm.registerEvents(new playerLeave(this), handler);
         pm.registerEvents(new PlayerMoveEvent(this), handler);
+    }
+
+    private void updateGamerules() {
+        switch(GameType()){
+            case CUSTOM:
+                for(GameModule module:GameModule.values()){setModule(module,false);}
+            case DESTROY:
+                for(GameModule module:GameModule.values()){setModule(module,true);}
+                break;
+            case CAPTURE:
+                setModule(GameModule.DEATH_MANAGER,true);
+                setModule(GameModule.TEAMS,true);
+                setModule(GameModule.BLOCK_PLACEMENT,true);
+                setModule(GameModule.BLOCK_ROLLBACK,true);
+                setModule(GameModule.NO_TOOL_DROP,false);
+                setModule(GameModule.NO_CRAFTING,true);
+                setModule(GameModule.NO_SMELTING,true);
+                setModule(GameModule.NO_HUNGER,true);
+                setModule(GameModule.CHEST_BLOCK,true);
+                setModule(GameModule.VOID_DEATH,true);
+                break;
+            default:
+                for(GameModule module:GameModule.values()){setModule(module,false);}
+        }
     }
 }

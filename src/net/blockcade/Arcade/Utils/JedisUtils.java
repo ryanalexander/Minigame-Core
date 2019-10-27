@@ -38,7 +38,7 @@ public class JedisUtils {
     }
 
     public static void end(redis.clients.jedis.JedisPool pool) {
-        pool.close();
+        pool.destroy();
     }
 
 }

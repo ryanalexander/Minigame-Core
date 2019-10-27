@@ -41,13 +41,14 @@
 package net.blockcade.Arcade.Events;
 
 import net.blockcade.Arcade.Game;
-import net.blockcade.Arcade.Managers.EventManager.PlayerDeathEvent;
 import net.blockcade.Arcade.Varables.DeathCause;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.Objects;
 import java.util.Random;
+
+import static net.blockcade.Arcade.Varables.GameModule.VOID_DEATH;
 
 public class PlayerMoveEvent implements Listener {
 
@@ -59,6 +60,7 @@ public class PlayerMoveEvent implements Listener {
 
     @EventHandler
     public void onMove(org.bukkit.event.player.PlayerMoveEvent e) {
+        if(!game.hasModule(VOID_DEATH)){return;}
         if(Objects.requireNonNull(e.getTo()).getY()<=1){
             Random rand = new Random();
             playerDeathEvent.doDeath(e.getPlayer(), String.format(playerDeathEvent.fall[rand.nextInt(playerDeathEvent.fall.length)], e.getPlayer().getDisplayName(), DeathCause.VOID), null);

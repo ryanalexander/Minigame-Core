@@ -40,10 +40,13 @@
 
 package net.blockcade.Arcade.Events;
 
+import fr.neatmonster.nocheatplus.NCPAPIProvider;
+import fr.neatmonster.nocheatplus.checks.CheckType;
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Managers.EventManager.PlayerRespawnEvent;
 import net.blockcade.Arcade.Utils.Spectator;
 import net.blockcade.Arcade.Utils.Text;
+import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.TeamColors;
 import org.bukkit.*;
@@ -89,16 +92,18 @@ public class playerDeathEvent implements Listener {
 
     private String[] entity_explode = new String[]{
             "%s&7's trusty tnt blew %s&7 to smithereens",
-            "&7Boom! &s&7 has blown up %s&7!"
+            "&7Boom! %s&7 has blown up %s&7!"
     };
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
+        if(!game.hasModule(GameModule.DEATH_MANAGER))return;
         e.setDeathMessage(null);
         e.setDroppedExp(0);
     }
     @EventHandler
     public void EntityDeath(EntityDeathEvent e){
+        if(!game.hasModule(GameModule.DEATH_MANAGER))return;
         switch(e.getEntityType()){
             case SILVERFISH:
                 e.getEntity().setAI(false);
@@ -109,6 +114,8 @@ public class playerDeathEvent implements Listener {
 
     @EventHandler
     public void EntityDamageEntity(EntityDamageByEntityEvent e) {
+        if(!game.hasModule(GameModule.DEATH_MANAGER))return;
+
         if (!(game.GameState().equals(GameState.IN_GAME))) return;
 
         if(e.getEntityType().equals(EntityType.SILVERFISH)){
@@ -161,6 +168,7 @@ public class playerDeathEvent implements Listener {
 
     @EventHandler
     public void EntityDamageEvent(EntityDamageEvent e) {
+        if(!game.hasModule(GameModule.DEATH_MANAGER))return;
         if(e.getEntityType().equals(EntityType.SILVERFISH))return;
         if (e.getCause().equals(EntityDamageEvent.DamageCause.LIGHTNING)) {
             e.setCancelled(true);
@@ -198,6 +206,9 @@ public class playerDeathEvent implements Listener {
     @EventHandler
     public static void doDeath(Player player, String message, Entity damager) {
         TeamColors team = game.TeamManager().getTeam(player);
+
+        NCPAPIProvider.getNoCheatPlusAPI().getPlayerDataManager().getPlayerData(player).exempt(CheckType.ALL);
+
         Bukkit.broadcastMessage(Text.format(message));
         player.setHealth(20);
         player.teleport(game.map().getSpawnLocation());
@@ -210,13 +221,7 @@ public class playerDeathEvent implements Listener {
         if (game.TeamManager().getCanRespawn(game.TeamManager().getTeam(player))) {
             Spectator.makeSpectator(player, game);
             ItemStack[] armor=player.getInventory().getArmorContents().clone();
-            int slot = 0;
-            for (ItemStack is : player.getInventory().getContents()) {
-                slot++;
-                if (slot > 99) return;
-                if (is == null) continue;
-                player.getInventory().remove(is);
-            }
+            player.getInventory().clear();
             new BukkitRunnable() {
                 int timer = 10;
 
@@ -248,9 +253,11 @@ public class playerDeathEvent implements Listener {
                         player.setAllowFlight(false);
                         player.setFlying(false);
 
-                        Bukkit.getPluginManager().callEvent(new PlayerRespawnEvent(player, false));
-
                         God(player, true);
+                        player.getInventory().setArmorContents(armor);
+                        NCPAPIProvider.getNoCheatPlusAPI().getPlayerDataManager().getPlayerData(player).clearAllExemptions(CheckType.ALL);
+
+                        Bukkit.getPluginManager().callEvent(new PlayerRespawnEvent(player, false));
                         new BukkitRunnable() {
                             int invulnerable = 8;
 
@@ -261,7 +268,6 @@ public class playerDeathEvent implements Listener {
                                     cancel();
                                     return;
                                 }
-                                player.getInventory().setArmorContents(armor);
                                 Text.sendMessage(player, String.format("&aInvulnerable for %s second%s", invulnerable / 2, (invulnerable == 1 ? "" : "s")), Text.MessageType.ACTION_BAR);
                                 invulnerable--;
                                 if (invulnerable <= 1) {

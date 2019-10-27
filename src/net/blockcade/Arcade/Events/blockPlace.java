@@ -39,6 +39,7 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftTNTPrimed;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -50,6 +51,8 @@ import org.bukkit.event.inventory.CraftItemEvent;
 
 import java.lang.reflect.Field;
 
+import static net.blockcade.Arcade.Varables.GameModule.*;
+
 public class blockPlace implements Listener {
 
     Game game;
@@ -60,6 +63,8 @@ public class blockPlace implements Listener {
 
     @EventHandler
     public void BlockFromToEvent(BlockFromToEvent e) {
+        if(!game.hasModule(BLOCK_PLACEMENT)){e.setCancelled(true);return;}
+        if(!game.hasModule(BLOCK_ROLLBACK))return;
         if (game.BlockManager().blocklog.contains(e.getBlock().getLocation())) {
             return;
         }
@@ -70,6 +75,8 @@ public class blockPlace implements Listener {
 
     @EventHandler
     public void blockPlace(BlockPlaceEvent e) {
+        if(!game.hasModule(BLOCK_PLACEMENT)){e.setCancelled(true);return;}
+        if(!game.hasModule(BLOCK_ROLLBACK))return;
         if (game.BlockManager().blocklog.contains(e.getBlock().getLocation())) {
             return;
         }
@@ -106,6 +113,7 @@ public class blockPlace implements Listener {
 
     @EventHandler
     public void craft(CraftItemEvent e) {
+        if(!game.hasModule(NO_CRAFTING))return;
         if (e.isCancelled()) return;
         if (game.GameState() == GameState.IN_GAME)
             e.setCancelled(true);
@@ -113,6 +121,8 @@ public class blockPlace implements Listener {
 
     @EventHandler
     public void blockBreak(BlockBreakEvent e) {
+        if(!game.hasModule(BLOCK_PLACEMENT)){e.setCancelled(true);return;}
+        if(!game.hasModule(BLOCK_ROLLBACK))return;
         for (Location bl : game.BlockManager().blocklog) {
             if (e.getBlock().getX() == bl.getBlock().getX() && e.getBlock().getY() == bl.getBlock().getY() && e.getBlock().getZ() == bl.getBlock().getZ())
                 return;
@@ -133,8 +143,9 @@ public class blockPlace implements Listener {
 
     @EventHandler
     public void tntExplode(EntityExplodeEvent e) {
-        e.setYield(0);
-        if (e.isCancelled()) return;
+        //if(!game.hasModule(BLOCK_ROLLBACK))return;
+        if (e.getEntity() instanceof Fireball)
+            ((Fireball) e.getEntity()).setIsIncendiary(false);
         for (Block b : e.blockList()) {
             if (game.BlockManager().canBreakBlock(b.getLocation())) {
                 game.BlockManager().update(b.getLocation(), b.getType(), b.getBlockData());
@@ -142,7 +153,8 @@ public class blockPlace implements Listener {
                 b.getLocation().getWorld().spawnParticle(Particle.BLOCK_DUST,b.getLocation(),2);
             }
         }
-        e.setCancelled(true);
+        e.setYield(0F);
+        e.blockList().clear();
     }
 
 
