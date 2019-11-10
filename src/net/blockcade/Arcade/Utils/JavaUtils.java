@@ -40,6 +40,8 @@
 
 package net.blockcade.Arcade.Utils;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 
 import java.util.Hashtable;
@@ -85,6 +87,11 @@ public class JavaUtils {
             }
         }
         return strHeading;
+    }
+
+    public static Location parseConfigLocation(String raw_loc) {
+        String[] loc_data = raw_loc.split("[:]");
+        return new Location(Bukkit.getWorld(loc_data[0]), Double.parseDouble(loc_data[1]), Double.parseDouble(loc_data[2]), Double.parseDouble(loc_data[3]));
     }
 
 }

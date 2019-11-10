@@ -38,9 +38,11 @@
  *
  */
 
-package net.blockcade.Arcade.Utils;
+package net.blockcade.Arcade.Utils.GameUtils;
 
 import net.blockcade.Arcade.Main;
+import net.blockcade.Arcade.Utils.Formatting.Item;
+import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.TeamColors;
 import org.bukkit.Location;
 import org.bukkit.Material;

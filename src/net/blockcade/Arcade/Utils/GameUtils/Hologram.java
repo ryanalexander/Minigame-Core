@@ -24,9 +24,10 @@
  *  @since 22/7/2019
  */
 
-package net.blockcade.Arcade.Utils;
+package net.blockcade.Arcade.Utils.GameUtils;
 
 import net.blockcade.Arcade.Game;
+import net.blockcade.Arcade.Utils.Formatting.Text;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;

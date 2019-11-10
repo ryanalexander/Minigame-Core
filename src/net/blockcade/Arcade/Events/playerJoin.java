@@ -44,9 +44,10 @@ import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Main;
 import net.blockcade.Arcade.Managers.ScoreboardManager;
 import net.blockcade.Arcade.Utils.JavaUtils;
-import net.blockcade.Arcade.Utils.Spectator;
-import net.blockcade.Arcade.Utils.TABList;
-import net.blockcade.Arcade.Utils.Text;
+import net.blockcade.Arcade.Utils.GameUtils.Spectator;
+import net.blockcade.Arcade.Utils.Formatting.TABList;
+import net.blockcade.Arcade.Utils.Formatting.Text;
+import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.Lang.lang;
 import org.bukkit.Bukkit;
@@ -135,8 +136,8 @@ public class playerJoin implements Listener {
                 Bukkit.broadcastMessage(Text.format(String.format(lang.GAME_PLAYER_JOIN_STARTING.get(), e.getPlayer().getDisplayName(), Bukkit.getOnlinePlayers().size(), game.minPlayers())));
                 break;
             case IN_GAME:
-                if (game.TeamManager().hasTeam(e.getPlayer())) {
-                    e.getPlayer().setHealth(0);
+                if (game.TeamManager().hasTeam(e.getPlayer())||game.hasModule(GameModule.ALLSTATE_JOIN)) {
+                    e.getPlayer().setHealth(20);
                 } else {
                     Spectator.makeSpectator(e.getPlayer(), game);
                 }

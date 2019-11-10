@@ -28,7 +28,7 @@ package net.blockcade.Arcade.Managers;
 
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Main;
-import net.blockcade.Arcade.Utils.Text;
+import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.TeamColors;
 import org.bukkit.Bukkit;
@@ -53,7 +53,7 @@ public class ScoreboardManager {
     private int counter = 32;
     private String payload = " ";
     private int payload_count = 1;
-    private PlayerManager playerManager;
+    private GamePlayer gamePlayer;
     private Game game;
 
     public ScoreboardManager(String name, Game game) {

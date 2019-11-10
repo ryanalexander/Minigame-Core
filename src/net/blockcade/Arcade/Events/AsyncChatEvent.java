@@ -27,8 +27,8 @@
 package net.blockcade.Arcade.Events;
 
 import net.blockcade.Arcade.Game;
-import net.blockcade.Arcade.Utils.Spectator;
-import net.blockcade.Arcade.Utils.Text;
+import net.blockcade.Arcade.Utils.GameUtils.Spectator;
+import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.TeamColors;
 import org.bukkit.Bukkit;

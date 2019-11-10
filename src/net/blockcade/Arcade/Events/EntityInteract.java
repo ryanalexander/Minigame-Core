@@ -41,7 +41,7 @@
 package net.blockcade.Arcade.Events;
 
 import net.blockcade.Arcade.Game;
-import net.blockcade.Arcade.Utils.Spectator;
+import net.blockcade.Arcade.Utils.GameUtils.Spectator;
 import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameState;
 import org.bukkit.entity.EntityType;
@@ -120,11 +120,11 @@ public class EntityInteract implements Listener {
     public void EntityInteractEvent(PlayerInteractEntityEvent e) {
         if(e.getRightClicked().getType().equals(EntityType.SILVERFISH)){e.setCancelled(false);return;}
         if (Spectator.isSpectator(e.getPlayer())) e.setCancelled(true);
-        if (e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)) e.setCancelled(true);
         if (game.EntityManager().hasFunction(e.getRightClicked())) {
             e.setCancelled(true);
             game.EntityManager().EntityFunction(e.getRightClicked()).run(e.getPlayer());
         }
+        if (e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)) e.setCancelled(true);
     }
 
 }

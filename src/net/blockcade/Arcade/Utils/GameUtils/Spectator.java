@@ -24,10 +24,11 @@
  *  @since 22/7/2019
  */
 
-package net.blockcade.Arcade.Utils;
+package net.blockcade.Arcade.Utils.GameUtils;
 
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Main;
+import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.TeamColors;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;

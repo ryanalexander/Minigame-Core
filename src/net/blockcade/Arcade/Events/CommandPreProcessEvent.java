@@ -41,7 +41,7 @@
 package net.blockcade.Arcade.Events;
 
 import net.blockcade.Arcade.Game;
-import net.blockcade.Arcade.Utils.Text;
+import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.GameState;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

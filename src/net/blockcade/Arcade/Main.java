@@ -26,9 +26,8 @@
 
 package net.blockcade.Arcade;
 
-import fr.neatmonster.nocheatplus.NCPAPIProvider;
 import net.blockcade.Arcade.Commands.mct;
-import net.blockcade.Arcade.Utils.Item;
+import net.blockcade.Arcade.Utils.Formatting.Item;
 import net.blockcade.Arcade.Utils.NCPHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -45,7 +44,7 @@ public class Main extends JavaPlugin {
         networking.init();
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new Item(), this);
-        NCPAPIProvider.getNoCheatPlusAPI().getEventRegistry().register(new NCPHandler());
+        pm.registerEvents(new NCPHandler(), this);
         getCommand("mct").setExecutor(new mct(this));
     }
 

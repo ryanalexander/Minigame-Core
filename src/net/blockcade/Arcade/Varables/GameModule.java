@@ -36,5 +36,21 @@ public enum GameModule {
      *
      * CHAT_MANAGER - Will the plugin format chat (If disabled, you alternative will need to follow guidelines, check with superior
      */
-    START_MECHANISM, CHEST_BLOCK, DEATH_MANAGER, NO_TOOL_DROP, BLOCK_PLACEMENT, BLOCK_ROLLBACK, TEAMS, NO_CRAFTING, NO_SMELTING, NO_HUNGER, VOID_DEATH, ALLSTATE_JOIN, CHAT_MANAGER
+    START_MECHANISM,
+    CHEST_BLOCK,
+    DEATH_MANAGER,
+    NO_TOOL_DROP,
+    BLOCK_PLACEMENT,
+    BLOCK_ROLLBACK,
+    TEAMS,
+    NO_CRAFTING,
+    NO_SMELTING,
+    NO_HUNGER,
+    VOID_DEATH,
+    ALLSTATE_JOIN,
+    CHAT_MANAGER,
+    NO_FALL_DAMAGE,
+    MAX_DAMAGE_HEIGHT,
+    @Deprecated
+    BOUNTIES
 }

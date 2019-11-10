@@ -26,8 +26,8 @@
 
 package net.blockcade.Arcade.Commands;
 
-import net.blockcade.Arcade.Utils.MCTInstance;
-import net.blockcade.Arcade.Utils.Text;
+import net.blockcade.Arcade.Utils.GameUtils.MCTInstance;
+import net.blockcade.Arcade.Utils.Formatting.Text;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

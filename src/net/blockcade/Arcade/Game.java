@@ -19,7 +19,7 @@ import net.blockcade.Arcade.Managers.EventManager.GameRegisterEvent;
 import net.blockcade.Arcade.Managers.GameManagers.init;
 import net.blockcade.Arcade.Managers.GameManagers.start;
 import net.blockcade.Arcade.Managers.GameManagers.stop;
-import net.blockcade.Arcade.Utils.Spectator;
+import net.blockcade.Arcade.Utils.GameUtils.Spectator;
 import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.GameType;
@@ -77,6 +77,9 @@ public class Game {
 
     // Game Modules
     private ArrayList<GameModule> gameModules;
+
+    // Max Damage Height
+    private int MaxDamageHeight=0;
 
     /**
      * Initialize Game
@@ -226,6 +229,14 @@ public class Game {
     }
 
     /**
+     * Set Max Damage Height requires module {@link GameModule#MAX_DAMAGE_HEIGHT}
+     * @param maxDamageHeight Max Damage Y Axis
+     */
+    public void setMaxDamageHeight(int maxDamageHeight) {
+        MaxDamageHeight = maxDamageHeight;
+    }
+
+    /**
      * Get World the game will operate in
      * @return Default map for game
      * @since 14/07/2019
@@ -309,6 +320,14 @@ public class Game {
     }
 
     /**
+     * Set Max Damage Height for the server requires {@link GameModule#MAX_DAMAGE_HEIGHT}
+     * @return Current MaxDamageHeight on Y Axis
+     */
+    public int getMaxDamageHeight() {
+        return MaxDamageHeight;
+    }
+
+    /**
      * Check if {@link GameModule} is enabled
      * @param module GameModule
      * @return If the game has the specific module enabled
@@ -318,7 +337,15 @@ public class Game {
         return this.gameModules.contains(module);
     }
 
-    public void setModule(GameModule module, boolean state){if(state){if(!this.gameModules.contains(module)){this.gameModules.add(module);}}else{if(!this.gameModules.contains(module)){this.gameModules.remove(module);}}}
+    public void setModule(GameModule module, boolean state){
+        if(state){
+            if(!this.gameModules.contains(module)){
+                this.gameModules.add(module);
+            }
+        }else{
+            this.gameModules.remove(module);
+        }
+    }
 
 
     @Override
@@ -362,6 +389,7 @@ public class Game {
         pm.registerEvents(new blockPlace(this), handler);
         pm.registerEvents(new EntityInteract(this), handler);
         pm.registerEvents(new playerDeathEvent(this), handler);
+        pm.registerEvents(new GamePlayer(this), handler);
         pm.registerEvents(new playerJoin(this), handler);
         pm.registerEvents(new playerLeave(this), handler);
         pm.registerEvents(new PlayerMoveEvent(this), handler);

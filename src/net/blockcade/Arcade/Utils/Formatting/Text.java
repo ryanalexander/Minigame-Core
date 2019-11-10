@@ -24,7 +24,7 @@
  *  @since 22/7/2019
  */
 
-package net.blockcade.Arcade.Utils;
+package net.blockcade.Arcade.Utils.Formatting;
 
 
 import net.minecraft.server.v1_14_R1.ChatMessageType;

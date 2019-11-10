@@ -38,7 +38,7 @@
  *
  */
 
-package net.blockcade.Arcade.Utils;
+package net.blockcade.Arcade.Utils.Formatting;
 
 import net.minecraft.server.v1_14_R1.IChatBaseComponent;
 import net.minecraft.server.v1_14_R1.PacketPlayOutPlayerListHeaderFooter;

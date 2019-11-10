@@ -42,7 +42,7 @@ package net.blockcade.Arcade.Managers.GameManagers;
 
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Main;
-import net.blockcade.Arcade.Utils.Text;
+import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.GameType;
 import net.blockcade.Arcade.Varables.TeamColors;

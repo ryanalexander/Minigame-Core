@@ -68,11 +68,10 @@ public class Networking {
                 try (Jedis jedis = pool.getResource()) {
                     String name = jedis.get(String.format("SERVER|%s|name", uuid));
                     if (name != null) {
-                        plugin.getConfig().set("server-name", name);
                         serverName = name;
                         cancel();
                     } else {
-                        System.out.println("Failed to get name. Trying again soon.");
+                        System.out.println(uuid+" | Failed to get name. Trying again soon.");
                     }
                 }
             }
@@ -108,7 +107,7 @@ public class Networking {
 
     private void pushData() {
         try (Jedis jedis = pool.getResource()) {
-            if (serverName != null && jedis.get(String.format("SERVER|%s|name", uuid)) == null)
+            if (serverName != null && serverName != "loading" && jedis.get(String.format("SERVER|%s|name", uuid)) == null)
                 jedis.set(String.format("SERVER|%s|name", uuid), serverName);
             jedis.set(String.format("SERVER|%s|ipport", uuid), getServer().getIp() + ":" + getServer().getPort());
             jedis.set(String.format("SERVER|%s|type", uuid), plugin.getConfig().getString("server-type"));

@@ -24,7 +24,7 @@
  *  @since 22/7/2019
  */
 
-package net.blockcade.Arcade.Utils;
+package net.blockcade.Arcade.Utils.Formatting;
 
 import org.bukkit.Color;
 import org.bukkit.Material;

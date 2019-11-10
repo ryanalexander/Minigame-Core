@@ -1,14 +1,12 @@
 package net.blockcade.Arcade.Utils;
 
-import fr.neatmonster.nocheatplus.checks.CheckType;
-import fr.neatmonster.nocheatplus.checks.access.IViolationInfo;
-import fr.neatmonster.nocheatplus.hooks.NCPHook;
-import fr.neatmonster.nocheatplus.hooks.NCPHookManager;
+import me.rerere.matrix.api.MatrixAPI;
+import me.rerere.matrix.api.events.PlayerViolationEvent;
 import net.blockcade.Arcade.Main;
-import net.minecraft.server.v1_14_R1.ChatMessage;
+import net.blockcade.Arcade.Utils.Formatting.Text;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -19,53 +17,49 @@ import java.util.Random;
 
 public class NCPHandler implements Listener {
 
-    public static ArrayList<Player> bans = new ArrayList<>();
+    ArrayList<Player> bans = new ArrayList<>();
 
-    public NCPHandler() {
-        NCPHookManager.addHook(CheckType.ALL, new NCPHook() {
-            @Override
-            public String getHookName() {
-                return null;
-            }
+    private enum VIOLATION {
+        HITBOX(17),
+        KILLAURA(65),
+        SPEED(300),
+        FLY(200),
+        BADPACKETS(120),
+        FASTUSE(15),
+        FASTHEAL(22),
+        BLOCK(16),
+        SCAFFOLD(20),
+        JESUS(35),
+        INVENTORY(90),
+        VELOCITY(45),
+        INTERACT(20),
+        PHASE(35),
+        VEHICLE(110)
+        ;
+        int i;
+        VIOLATION(int i){
+            this.i=i;
+        }
+        public int getI() {
+            return i;
+        }
+    };
 
-            @Override
-            public String getHookVersion() {
-                return null;
+    @EventHandler
+    public void IViolation(PlayerViolationEvent event){
+        if(bans.contains(event.getPlayer()))return;
+            VIOLATION v = VIOLATION.valueOf(event.getHackType().name().toUpperCase());
+            int violation_count = MatrixAPI.getViolations(event.getPlayer(),event.getHackType());
+            if(v!=null){
+            if(violation_count>=v.getI()){
+                banPlayer(event.getPlayer(),event.getHackType().name()+"|"+violation_count+"|"+event.getMessage());
+                System.out.println(String.format("System banning %s for %s",event.getPlayer().getName(),event.getHackType().name()));
+            }else {
+                System.out.println(String.format("VIOLATION %s for %s is not > %s - No ban applied",violation_count,event.getHackType().name(),v.getI()));
             }
-
-            @Override
-            public boolean onCheckFailure(CheckType checkType, Player player, IViolationInfo iViolationInfo) {
-                if(bans.contains(player)){
-                    return false;
-                }
-                switch(checkType){
-                    case NET_PACKETFREQUENCY:
-                    case MOVING_MOREPACKETS:
-                    case MOVING_NOFALL:
-                    case MOVING_CREATIVEFLY:
-                    case MOVING_SURVIVALFLY:
-                        if(iViolationInfo.getTotalVl()>7){System.out.println(String.format("Banning %s for Movement - %s",player.getName(),checkType));banPlayer(player,checkType+"["+iViolationInfo.getTotalVl()+"]");}
-                        break;
-                    case FIGHT_REACH:
-                    case FIGHT_CRITICAL:
-                    case FIGHT:
-                        if(iViolationInfo.getTotalVl()>10){System.out.println(String.format("Banning %s for PVP Hacks",player.getName()));banPlayer(player,checkType+"["+iViolationInfo.getTotalVl()+"]");}
-                        break;
-                    case BLOCKPLACE_SCAFFOLD:
-                    case BLOCKPLACE_SPEED:
-                    case BLOCKPLACE_FASTPLACE:
-                    case BLOCKBREAK_DIRECTION:
-                    case BLOCKBREAK_REACH:
-                    case BLOCKBREAK_FASTBREAK:
-                        if(iViolationInfo.getTotalVl()>10){System.out.println(String.format("Banning %s for Scaffold",player.getName()));banPlayer(player,checkType+"["+iViolationInfo.getTotalVl()+"]");}
-                        break;
-                    default:
-                        System.out.println(String.format("[IGNORED] Check Type: %s Player: %s Level: %s",checkType.getName(),player.getName(),iViolationInfo.getAddedVl()+"/"+iViolationInfo.getTotalVl()));
-                        break;
-                }
-                return false;
-            }
-        });
+        }else {
+            System.out.println("System ignored "+event.getHackType().name());
+        }
     }
 
     public void banPlayer(Player player, String banData){
@@ -89,11 +83,11 @@ public class NCPHandler implements Listener {
                     new BukkitRunnable(){
                         @Override
                         public void run() {
-                            if(player.isOnline()){((CraftPlayer)player).getHandle().playerConnection.networkManager.close(new ChatMessage("§cBanned by Guardian"));}
+                            if(player.isOnline())player.kickPlayer(Text.format("&cGuardian Cheat Detection"));
                         }
                     }.runTaskLater(Main.getPlugin(Main.class),60L);
                 }
-            }.runTaskLater(Main.getPlugin(Main.class),(new Random().nextInt(60)*20));
+            }.runTaskLater(Main.getPlugin(Main.class),(new Random().nextInt(30)*20));
             bans.add(player);
     }
 

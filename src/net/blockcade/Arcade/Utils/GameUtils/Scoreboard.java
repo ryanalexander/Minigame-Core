@@ -52,7 +52,7 @@
  *
  */
 
-package net.blockcade.Arcade.Utils;
+package net.blockcade.Arcade.Utils.GameUtils;
 
 
 import net.blockcade.Arcade.Game;

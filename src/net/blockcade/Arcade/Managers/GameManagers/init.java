@@ -84,7 +84,7 @@ package net.blockcade.Arcade.Managers.GameManagers;
 
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Managers.EventManager.GameStartEvent;
-import net.blockcade.Arcade.Utils.Text;
+import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.TeamColors;
 import org.bukkit.Bukkit;
@@ -93,7 +93,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.Map;

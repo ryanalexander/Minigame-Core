@@ -40,12 +40,10 @@
 
 package net.blockcade.Arcade.Events;
 
-import fr.neatmonster.nocheatplus.NCPAPIProvider;
-import fr.neatmonster.nocheatplus.checks.CheckType;
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Managers.EventManager.PlayerRespawnEvent;
-import net.blockcade.Arcade.Utils.Spectator;
-import net.blockcade.Arcade.Utils.Text;
+import net.blockcade.Arcade.Utils.GameUtils.Spectator;
+import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.TeamColors;
@@ -65,6 +63,10 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import static net.blockcade.Arcade.Varables.GameModule.MAX_DAMAGE_HEIGHT;
+import static net.blockcade.Arcade.Varables.GameModule.NO_FALL_DAMAGE;
+import static org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW;
 
 public class playerDeathEvent implements Listener {
 
@@ -114,9 +116,9 @@ public class playerDeathEvent implements Listener {
 
     @EventHandler
     public void EntityDamageEntity(EntityDamageByEntityEvent e) {
-        if(!game.hasModule(GameModule.DEATH_MANAGER))return;
 
         if (!(game.GameState().equals(GameState.IN_GAME))) return;
+        if(game.hasModule(NO_FALL_DAMAGE)&&e.getCause().equals(EntityDamageEvent.DamageCause.FALL)){e.setCancelled(true);return;}
 
         if(e.getEntityType().equals(EntityType.SILVERFISH)){
             if(((LivingEntity)e.getEntity()).getMaxHealth()-e.getDamage()<=1){
@@ -153,6 +155,8 @@ public class playerDeathEvent implements Listener {
             case PLAYER:
                 Player player = (Player) e.getEntity();
                 if ((player.getHealth() - e.getFinalDamage()) <= 1) {
+                    Bukkit.getPluginManager().callEvent(new net.blockcade.Arcade.Managers.EventManager.PlayerDeathEvent(player,e.getCause(),e.getDamager()));
+                    if(!game.hasModule(GameModule.DEATH_MANAGER))return;
                     Player killer = resolveDamager(e.getDamager());
                     if (game.TeamManager().getTeam(killer).equals(game.TeamManager().getTeam(player))) {
                         return;
@@ -168,6 +172,9 @@ public class playerDeathEvent implements Listener {
 
     @EventHandler
     public void EntityDamageEvent(EntityDamageEvent e) {
+        if(e.getEntity().getType().equals(ARROW))e.setCancelled(true);
+        if(game.hasModule(MAX_DAMAGE_HEIGHT)&&e.getEntity().getLocation().getY()>=game.getMaxDamageHeight()){e.setCancelled(true);return;}
+        if(game.hasModule(NO_FALL_DAMAGE)&&e.getCause().equals(EntityDamageEvent.DamageCause.FALL)){e.setCancelled(true);return;}
         if(!game.hasModule(GameModule.DEATH_MANAGER))return;
         if(e.getEntityType().equals(EntityType.SILVERFISH))return;
         if (e.getCause().equals(EntityDamageEvent.DamageCause.LIGHTNING)) {
@@ -205,9 +212,8 @@ public class playerDeathEvent implements Listener {
 
     @EventHandler
     public static void doDeath(Player player, String message, Entity damager) {
+        if(!game.hasModule(GameModule.DEATH_MANAGER))return;
         TeamColors team = game.TeamManager().getTeam(player);
-
-        NCPAPIProvider.getNoCheatPlusAPI().getPlayerDataManager().getPlayerData(player).exempt(CheckType.ALL);
 
         Bukkit.broadcastMessage(Text.format(message));
         player.setHealth(20);
@@ -255,7 +261,6 @@ public class playerDeathEvent implements Listener {
 
                         God(player, true);
                         player.getInventory().setArmorContents(armor);
-                        NCPAPIProvider.getNoCheatPlusAPI().getPlayerDataManager().getPlayerData(player).clearAllExemptions(CheckType.ALL);
 
                         Bukkit.getPluginManager().callEvent(new PlayerRespawnEvent(player, false));
                         new BukkitRunnable() {
