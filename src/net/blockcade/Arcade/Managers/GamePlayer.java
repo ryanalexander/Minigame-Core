@@ -36,7 +36,7 @@ public class GamePlayer implements Listener {
     private int deaths=0;
 
     private long last_combat = 0;
-    private GamePlayer last_combat_player;
+    private GamePlayer last_combat_player=null;
 
     private boolean eliminate=false;
 
@@ -154,10 +154,14 @@ public class GamePlayer implements Listener {
         if(event.getDamager() instanceof Player && event.getEntity() instanceof Player){
             GamePlayer victom = GamePlayers.get((Player)event.getEntity());
             GamePlayer damager = GamePlayers.get((Player)event.getDamager());
-            victom.last_combat=System.currentTimeMillis();
-            damager.last_combat=System.currentTimeMillis();
-            victom.last_combat_player=damager;
-            damager.last_combat_player=victom;
+            if(victom!=null){
+                victom.last_combat=System.currentTimeMillis();
+                victom.last_combat_player=damager;
+            }
+            if(damager!=null) {
+                damager.last_combat_player = victom;
+                damager.last_combat = System.currentTimeMillis();
+            }
         }
     }
     @EventHandler

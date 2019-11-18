@@ -64,10 +64,8 @@ public class blockPlace implements Listener {
     @EventHandler
     public void BlockFromToEvent(BlockFromToEvent e) {
         if(!game.hasModule(BLOCK_PLACEMENT)){e.setCancelled(true);return;}
-        if(!game.hasModule(BLOCK_ROLLBACK))return;
-        if (game.BlockManager().blocklog.contains(e.getBlock().getLocation())) {
-            return;
-        }
+        if(!game.hasModule(BLOCK_ROLLBACK)) return;
+        if (game.BlockManager().blocklog.contains(e.getBlock().getLocation())) return;
         if (e.isCancelled()) return;
         if (game.GameState() == GameState.IN_GAME)
             game.BlockManager().update(e.getBlock().getLocation(), e.getBlock().getType(), e.getBlock().getBlockData());
@@ -146,6 +144,7 @@ public class blockPlace implements Listener {
         //if(!game.hasModule(BLOCK_ROLLBACK))return;
         if (e.getEntity() instanceof Fireball)
             ((Fireball) e.getEntity()).setIsIncendiary(false);
+        e.setCancelled(true);
         for (Block b : e.blockList()) {
             if (game.BlockManager().canBreakBlock(b.getLocation())) {
                 game.BlockManager().update(b.getLocation(), b.getType(), b.getBlockData());
@@ -153,8 +152,6 @@ public class blockPlace implements Listener {
                 b.getLocation().getWorld().spawnParticle(Particle.BLOCK_DUST,b.getLocation(),2);
             }
         }
-        e.setYield(0F);
-        e.blockList().clear();
     }
 
 

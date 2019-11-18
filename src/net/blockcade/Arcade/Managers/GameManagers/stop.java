@@ -77,7 +77,7 @@ public class stop {
             public void run() {
                 Bukkit.shutdown();
             }
-        }.runTaskLater(game.handler(), 20L);
+        }.runTaskLater(game.handler(), 60L);
     }
 
     public void doFinishGame(Game game, boolean stop) {

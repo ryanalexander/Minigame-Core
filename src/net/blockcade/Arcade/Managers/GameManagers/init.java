@@ -108,6 +108,11 @@ public class init {
 
         for (Map.Entry<Player, TeamColors> payload : game.TeamManager().getPlayers().entrySet()) {
             Player player = payload.getKey();
+            player.setGameMode(GameMode.ADVENTURE);
+            player.setVelocity(new Vector(0,0,0));
+            player.getInventory().setArmorContents(game.TeamManager().getArmor(game.TeamManager().getTeam(player)));
+            player.teleport(game.TeamManager().getSpawn(payload.getValue()));
+            player.setVelocity(new Vector(0,0,0));
             player.setLevel(0);
             player.getEnderChest().clear();
             player.getInventory().clear();
@@ -119,11 +124,7 @@ public class init {
                 player.removePotionEffect(effect.getType());
             for (Player p : Bukkit.getOnlinePlayers())
                 p.showPlayer(player);
-            player.getInventory().setArmorContents(game.TeamManager().getArmor(game.TeamManager().getTeam(player)));
             player.setGameMode(GameMode.SURVIVAL);
-            player.setVelocity(new Vector(0,0,0));
-            player.teleport(game.TeamManager().getSpawn(payload.getValue()));
-            player.setVelocity(new Vector(0,0,0));
         }
         Bukkit.getServer().getPluginManager().callEvent(new GameStartEvent());
 

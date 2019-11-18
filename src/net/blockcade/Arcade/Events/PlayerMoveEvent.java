@@ -61,6 +61,7 @@ public class PlayerMoveEvent implements Listener {
     @EventHandler
     public void onMove(org.bukkit.event.player.PlayerMoveEvent e) {
         if(!game.hasModule(VOID_DEATH)){return;}
+
         if(Objects.requireNonNull(e.getTo()).getY()<=1){
             Random rand = new Random();
             playerDeathEvent.doDeath(e.getPlayer(), String.format(playerDeathEvent.fall[rand.nextInt(playerDeathEvent.fall.length)], e.getPlayer().getDisplayName(), DeathCause.VOID), null);
