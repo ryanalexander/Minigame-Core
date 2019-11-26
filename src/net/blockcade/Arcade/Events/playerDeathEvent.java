@@ -42,6 +42,7 @@ package net.blockcade.Arcade.Events;
 
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Managers.EventManager.PlayerRespawnEvent;
+import net.blockcade.Arcade.Managers.GamePlayer;
 import net.blockcade.Arcade.Utils.GameUtils.Spectator;
 import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.GameModule;
@@ -116,7 +117,10 @@ public class playerDeathEvent implements Listener {
 
     @EventHandler
     public void EntityDamageEntity(EntityDamageByEntityEvent e) {
-
+        if (e.getDamager() instanceof Player&&Spectator.isSpectator((Player)e.getDamager())) {
+            e.setCancelled(true);
+            return;
+        }
         if (!(game.GameState().equals(GameState.IN_GAME))) return;
         if(game.hasModule(NO_FALL_DAMAGE)&&e.getCause().equals(EntityDamageEvent.DamageCause.FALL)){e.setCancelled(true);return;}
 
@@ -227,6 +231,7 @@ public class playerDeathEvent implements Listener {
         if (game.TeamManager().getCanRespawn(game.TeamManager().getTeam(player))) {
             Spectator.makeSpectator(player, game);
             ItemStack[] armor=player.getInventory().getArmorContents().clone();
+            ItemStack[] inventoryContent = player.getInventory().getContents().clone();
             player.getInventory().clear();
             new BukkitRunnable() {
                 int timer = 10;
@@ -262,7 +267,7 @@ public class playerDeathEvent implements Listener {
                         God(player, true);
                         player.getInventory().setArmorContents(armor);
 
-                        Bukkit.getPluginManager().callEvent(new PlayerRespawnEvent(player, false));
+                        Bukkit.getPluginManager().callEvent(new PlayerRespawnEvent(player, false,inventoryContent));
                         new BukkitRunnable() {
                             int invulnerable = 8;
 
@@ -284,6 +289,10 @@ public class playerDeathEvent implements Listener {
                 }
             }.runTaskTimer(game.handler(), 0L, 10L);
         } else {
+            player.getInventory().clear();
+            if(damager instanceof Player){
+                GamePlayer.getGamePlayer((Player)damager).addElimination();
+            }
             Text.sendMessage(player, "&cEliminated", Text.MessageType.TITLE);
             Text.sendMessage(player,"&fYou may no longer respawn", Text.MessageType.SUBTITLE);
             game.TeamManager().doEliminatePlayer(team, player);

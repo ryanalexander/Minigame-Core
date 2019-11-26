@@ -29,16 +29,23 @@ package net.blockcade.Arcade.Managers.EventManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
 
 public class PlayerRespawnEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     private Player player;
     private boolean eliminated;
+    private ItemStack[] inventoryContents;
 
-    public PlayerRespawnEvent(Player player, boolean eliminated) {
+    public PlayerRespawnEvent(Player player, boolean eliminated, ItemStack[] inventoryContents) {
         this.player = player;
         this.eliminated = eliminated;
+        this.inventoryContents = inventoryContents;
+    }
+
+    public ItemStack[] getInventoryContents() {
+        return inventoryContents;
     }
 
     public Player getPlayer() {

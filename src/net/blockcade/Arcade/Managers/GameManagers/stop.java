@@ -43,6 +43,7 @@ package net.blockcade.Arcade.Managers.GameManagers;
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Main;
 import net.blockcade.Arcade.Utils.Formatting.Text;
+import net.blockcade.Arcade.Utils.SQL;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.GameType;
 import net.blockcade.Arcade.Varables.TeamColors;
@@ -83,6 +84,12 @@ public class stop {
     public void doFinishGame(Game game, boolean stop) {
         if (game.GameType().equals(GameType.ELIMINATE)||game.GameType().equals(GameType.DESTROY)) {
             TeamColors winner = game.TeamManager().getActive_teams().get(0);
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    SQL sql =new SQL(game.handler().getConfig().getString("sql.host"),3306,game.handler().getConfig().getString("sql.user"),game.handler().getConfig().getString("sql.pass"),"games");
+                }
+            }.runTaskAsynchronously(game.handler());
             Bukkit.broadcastMessage(Text.format(String.format("&eCongratulations to %s&e team! You won!", game.TeamManager().getTeamColor(winner) + winner)));
             for (HashMap.Entry<Player, TeamColors> ent : game.TeamManager().getPlayers().entrySet()) {
                 if (ent.getValue().equals(winner)) {

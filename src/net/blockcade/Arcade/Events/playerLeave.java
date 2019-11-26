@@ -56,7 +56,7 @@ public class playerLeave implements Listener {
 
     @EventHandler
     public void playerLeave(PlayerQuitEvent e) {
-        if (game.TeamManager().hasTeam(e.getPlayer())) {
+        if (game.TeamManager().hasTeam(e.getPlayer())&&game.TeamManager().isEliminated(game.TeamManager().getTeam(e.getPlayer()))) {
             TeamColors team = game.TeamManager().getTeam(e.getPlayer());
             game.TeamManager().doEliminatePlayer(team, e.getPlayer());
         }

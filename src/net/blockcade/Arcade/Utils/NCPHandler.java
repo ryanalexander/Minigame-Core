@@ -21,20 +21,20 @@ public class NCPHandler implements Listener {
 
     private enum VIOLATION {
         HITBOX(17),
-        KILLAURA(65),
-        SPEED(300),
-        FLY(200),
-        BADPACKETS(120),
-        FASTUSE(15),
-        FASTHEAL(22),
-        BLOCK(16),
-        SCAFFOLD(20),
-        JESUS(35),
-        INVENTORY(90),
-        VELOCITY(45),
-        INTERACT(20),
+        KILLAURA(70),
+        SPEED(180),
+        FLY(180),
+        BADPACKETS(150),
+        FASTUSE(5),
+        FASTHEAL(7),
+        BLOCK(10),
+        SCAFFOLD(16),
+        JESUS(20),
+        INVENTORY(20),
+        VELOCITY(30),
+        INTERACT(8),
         PHASE(35),
-        VEHICLE(110)
+        VEHICLE(17)
         ;
         int i;
         VIOLATION(int i){

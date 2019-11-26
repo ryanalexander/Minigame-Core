@@ -137,7 +137,7 @@ public class start {
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASEDRUM, 1, 1);
                     }
                 }
-                if (counter <= 0) {
+                if (counter <= 1) {
                     game.init();
                     cancel();
                 }

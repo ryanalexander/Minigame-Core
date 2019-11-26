@@ -1,9 +1,11 @@
 package net.blockcade.Arcade.Managers;
 
 import net.blockcade.Arcade.Game;
+import net.blockcade.Arcade.Main;
 import net.blockcade.Arcade.Managers.EventManager.PlayerCombatLogEvent;
 import net.blockcade.Arcade.Managers.EventManager.PlayerDeathEvent;
 import net.blockcade.Arcade.Utils.Formatting.Text;
+import net.blockcade.Arcade.Varables.GameName;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -12,10 +14,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -24,6 +29,7 @@ public class GamePlayer implements Listener {
     private static HashMap<Player,GamePlayer> GamePlayers=new HashMap<>();
     private static Game game;
 
+    private boolean independent;
     private Player player;
 
     private long experience = 0;
@@ -31,6 +37,8 @@ public class GamePlayer implements Listener {
 
     private int killstreak = 0;
     private int highest_killstreak = 0;
+
+    private int eliminations=0;
 
     private int kills=0;
     private int deaths=0;
@@ -40,9 +48,19 @@ public class GamePlayer implements Listener {
 
     private boolean eliminate=false;
 
-    public GamePlayer(Game game){this.game=game;}
+    public GamePlayer(Game game, boolean independent){
+        this.game=game;
+        this.independent=independent;
+    }
 
-    public GamePlayer(Player player){GamePlayers.put(player,this);this.player=player;}
+    public GamePlayer(Player player){
+        GamePlayers.put(player,this);
+        this.player=player;
+        if(!hasStatistic(game.getGameName())){
+            System.out.println("New player - Creating statistic");
+            Main.getSqlConnection().query(String.format("INSERT INTO `player_statistics` (player_uuid,game_enum) VALUES ('%s','%s');",player.getUniqueId(),game.getGameName().name()),true);
+        }
+    }
 
     public boolean isCombat() { return !((last_combat-System.currentTimeMillis())<-10000);}
     public long getCombatTime() {return isCombat()?(10000+(last_combat-System.currentTimeMillis())):0;}
@@ -73,6 +91,7 @@ public class GamePlayer implements Listener {
 
     private void addKill() {this.kills=this.kills+1;}
     private void addDeath() {this.deaths=this.deaths+1;}
+    public void addElimination() {this.eliminations=this.eliminations+1;}
 
     public void setDeaths(int deaths) {
         this.deaths = deaths;
@@ -110,6 +129,10 @@ public class GamePlayer implements Listener {
         return killstreak;
     }
 
+    public int getEliminations() {
+        return eliminations;
+    }
+
     public int getHighestKillstreak() {
         return highest_killstreak;
     }
@@ -134,6 +157,22 @@ public class GamePlayer implements Listener {
     public void teleport(World world, double x, double y, double z){teleport(new Location(world,x,y,z));}
     public void teleport(Location location){this.player.teleport(location);}
 
+    public boolean hasStatistic(GameName game){
+        try {
+            ResultSet r = Main.getSqlConnection().query(String.format("SELECT `id` FROM `player_statistics` WHERE `uuid`='%s' AND `game_enum`='%s' LIMIT 1;", player.getUniqueId(), game.name()));
+            if(r==null||r.getFetchSize()<1){return false;}
+            return true;
+        }catch (SQLException e){
+            return false;
+        }
+    }
+
+    @EventHandler
+    public void PlayerJoin(PlayerJoinEvent e){
+        if(independent){
+            new GamePlayer(e.getPlayer());
+        }
+    }
 
     // Handler events
     @EventHandler
@@ -173,5 +212,10 @@ public class GamePlayer implements Listener {
         victom.addDeath();
         damager.addKill();
         damager.setKillstreak(damager.getKillstreak()+1);
+    }
+
+    public static GamePlayer getGamePlayer(Player player){
+        if(!GamePlayers.containsKey(player))new GamePlayer(player);
+        return GamePlayers.get(player);
     }
 }

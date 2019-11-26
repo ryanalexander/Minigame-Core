@@ -29,7 +29,14 @@ package net.blockcade.Arcade.Varables;
 import org.bukkit.Color;
 
 public enum TeamColors {
-    RED("&c", Color.RED, "RED"), BLUE("&9", Color.BLUE, "BLUE"), AQUA("&b", Color.AQUA, "CYAN"), YELLOW("&e", Color.YELLOW, "YELLOW"), WHITE("&f", Color.WHITE, "WHITE"), GRAY("&7", Color.GRAY, "LIGHT_GRAY"), PINK("&d", Color.MAROON, "PINK"), GREEN("&a", Color.LIME, "LIME");
+    RED("&c", Color.RED, "RED"),
+    BLUE("&9", Color.BLUE, "BLUE"),
+    AQUA("&b", Color.AQUA, "CYAN"),
+    YELLOW("&e", Color.YELLOW, "YELLOW"),
+    WHITE("&f", Color.WHITE, "WHITE"),
+    GRAY("&7", Color.GRAY, "LIGHT_GRAY"),
+    PINK("&d", Color.MAROON, "PINK"),
+    GREEN("&a", Color.LIME, "LIME");
     private Color color;
     private String chatColor;
     private String translation;

@@ -21,6 +21,7 @@ import net.blockcade.Arcade.Managers.GameManagers.start;
 import net.blockcade.Arcade.Managers.GameManagers.stop;
 import net.blockcade.Arcade.Utils.GameUtils.Spectator;
 import net.blockcade.Arcade.Varables.GameModule;
+import net.blockcade.Arcade.Varables.GameName;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.GameType;
 import org.bukkit.Bukkit;
@@ -77,6 +78,9 @@ public class Game {
 
     // Game Modules
     private ArrayList<GameModule> gameModules;
+
+    // Game Name (Required for stat tracking
+    private GameName gameName;
 
     // Max Damage Height
     private int MaxDamageHeight=0;
@@ -327,6 +331,14 @@ public class Game {
         return MaxDamageHeight;
     }
 
+    public GameName getGameName() {
+        return gameName;
+    }
+
+    public void setGameName(GameName gameName) {
+        this.gameName = gameName;
+    }
+
     /**
      * Check if {@link GameModule} is enabled
      * @param module GameModule
@@ -389,10 +401,10 @@ public class Game {
         pm.registerEvents(new blockPlace(this), handler);
         pm.registerEvents(new EntityInteract(this), handler);
         pm.registerEvents(new playerDeathEvent(this), handler);
-        pm.registerEvents(new GamePlayer(this), handler);
         pm.registerEvents(new playerJoin(this), handler);
         pm.registerEvents(new playerLeave(this), handler);
         pm.registerEvents(new PlayerMoveEvent(this), handler);
+        pm.registerEvents(new WeatherChange(this), handler);
     }
 
     private void updateGamerules() {

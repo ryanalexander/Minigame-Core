@@ -52,5 +52,6 @@ public enum GameModule {
     NO_FALL_DAMAGE,
     MAX_DAMAGE_HEIGHT,
     @Deprecated
-    BOUNTIES
+    BOUNTIES,
+    NO_WEATHER_CHANGE
 }

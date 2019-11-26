@@ -46,6 +46,7 @@ import net.blockcade.Arcade.Varables.GameState;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
 public class ItemDropEvent implements Listener {
@@ -67,6 +68,11 @@ public class ItemDropEvent implements Listener {
             )
             e.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void ItemMerge(ItemMergeEvent e){
+        e.setCancelled(true);
     }
 
 }

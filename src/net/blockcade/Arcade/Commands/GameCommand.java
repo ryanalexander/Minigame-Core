@@ -27,11 +27,13 @@
 package net.blockcade.Arcade.Commands;
 
 import net.blockcade.Arcade.Game;
+import net.blockcade.Arcade.Managers.GamePlayer;
 import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.GameState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class GameCommand implements CommandExecutor {
@@ -90,8 +92,12 @@ public class GameCommand implements CommandExecutor {
                     sender.sendMessage(Text.format("&aADMIN> &7There is already a game in progress."));
                 }
                 break;
-            case "cleanup":
-
+            case "stats":
+                GamePlayer player = GamePlayer.getGamePlayer((Player)sender);
+                Text.sendMessage(player.getPlayer(),"KILLS: "+player.getKills(), Text.MessageType.TEXT_CHAT);
+                Text.sendMessage(player.getPlayer(),"DEATHS: "+player.getDeaths(), Text.MessageType.TEXT_CHAT);
+                Text.sendMessage(player.getPlayer(),"ELIMINATIONS: "+player.getEliminations(), Text.MessageType.TEXT_CHAT);
+                break;
             case "state":
                 sender.sendMessage(Text.format(String.format("&aADMIN> &7The current GameState is \"&e%s&7\".", game.GameState())));
                 break;

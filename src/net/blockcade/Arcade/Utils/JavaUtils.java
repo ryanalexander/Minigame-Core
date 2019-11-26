@@ -42,11 +42,25 @@ package net.blockcade.Arcade.Utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class JavaUtils {
+
+    public static enum TimeUnit {
+        MILI("Milliseconds ",1),
+        SECOND("Seconds",1000),
+        MINUTE("Minutes",60000);
+        private String translated;
+        private int division;
+        TimeUnit(String translated, int division){
+            this.translated=translated;this.division=division;
+        }
+    }
 
     public static String center(String str, int size) {
         int left = (size - str.length()) / 2;
@@ -89,9 +103,28 @@ public class JavaUtils {
         return strHeading;
     }
 
+    public static ArrayList<Material> getMatFromItemstack(ArrayList<ItemStack> items){
+        ArrayList<Material> mats = new ArrayList<>();
+        for(ItemStack is : items){
+            if(is!=null)mats.add(is.getType());
+        }
+        return mats;
+    }
+
     public static Location parseConfigLocation(String raw_loc) {
         String[] loc_data = raw_loc.split("[:]");
         return new Location(Bukkit.getWorld(loc_data[0]), Double.parseDouble(loc_data[1]), Double.parseDouble(loc_data[2]), Double.parseDouble(loc_data[3]));
+    }
+
+    public static long FormatMS(Long time, TimeUnit timeUnit){
+        /*
+        TimeUnit timeUnit = TimeUnit.MILI;
+        if(time>60000){timeUnit=TimeUnit.MINUTE;}
+        if((time<60000)){timeUnit=TimeUnit.SECOND;}
+        if((time<1000)){timeUnit=TimeUnit.MILI;}
+        */
+
+        return ((time==0?1:time)/timeUnit.division);
     }
 
 }

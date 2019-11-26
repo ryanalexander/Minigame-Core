@@ -54,6 +54,7 @@ public class Hologram {
         this.lines = lines;
         this.lineEntities = new ArrayList<>();
         this.location = location;
+        build();
     }
 
     public void editLine(int line, String string) {
@@ -89,7 +90,11 @@ public class Hologram {
 
     private void build() {
         for (String line : this.lines) {
-            this.lineEntities.add((ArmorStand) game.EntityManager().CreateEntity(location, EntityType.ARMOR_STAND, line));
+            ArmorStand as = (ArmorStand) game.EntityManager().CreateEntity(location, EntityType.ARMOR_STAND, line);
+            as.setGravity(false);
+            as.setMarker(true);
+            as.setVisible(false);
+            this.lineEntities.add(as);
             Location addX = this.location;
             addX.add(0.25, 0, 0);
             this.location = addX;

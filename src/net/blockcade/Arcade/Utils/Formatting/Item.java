@@ -26,6 +26,7 @@
 
 package net.blockcade.Arcade.Utils.Formatting;
 
+import net.blockcade.Arcade.Utils.GameUtils.Spectator;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -46,6 +47,7 @@ import java.util.Map;
 
 public class Item implements Listener {
     public static HashMap<Item, click> actions = new HashMap<>();
+    public static HashMap<Player, Long> player_delays = new HashMap<>();
 
     //Game GameCommand;
     ItemStack is;
@@ -59,10 +61,19 @@ public class Item implements Listener {
         this.GameCommand=GameCommand;
     }*/
 
+    public Item(ItemStack is, String name) {
+        this.is = is;
+        im = this.is.getItemMeta();
+        im.setDisplayName(Text.format(name));
+        im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+
+    }
     public Item(Material material, String name) {
         this.is = new ItemStack(material);
         im = this.is.getItemMeta();
         im.setDisplayName(Text.format(name));
+        im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
     }
 
@@ -119,9 +130,11 @@ public class Item implements Listener {
 
     @EventHandler
     public void EntityInteract(PlayerInteractEvent e) {
+        if(Spectator.isSpectator(e.getPlayer()))e.setCancelled(true);
         for (Map.Entry<Item, click> is : actions.entrySet()) {
             if (is.getKey().spigot().equals(e.getItem())) {
                 e.setCancelled(true);
+                //if(!player_delays.containsKey((Player)e.getPlayer())||(System.currentTimeMillis()-player_delays.get((Player)e.getPlayer()))>250){player_delays.put((Player)e.getPlayer(),System.currentTimeMillis());}else{e.setCancelled(true);return;}
                 if (is.getValue() != null)
                     is.getValue().run(e.getPlayer());
                 return;
@@ -131,6 +144,7 @@ public class Item implements Listener {
 
     @EventHandler
     public void InventoryClickEvent(InventoryClickEvent e) {
+        if(Spectator.isSpectator((Player)e.getWhoClicked()))e.setCancelled(true);
         /**
          * Ignore armor slots
          */
@@ -139,6 +153,7 @@ public class Item implements Listener {
         for (Map.Entry<Item, click> is : actions.entrySet()) {
             if (is.getKey().spigot().equals(e.getCurrentItem())) {
                 e.setCancelled(true);
+                if(!player_delays.containsKey((Player)e.getWhoClicked())||(System.currentTimeMillis()-player_delays.get((Player)e.getWhoClicked()))>250){player_delays.put((Player)e.getWhoClicked(),System.currentTimeMillis());}else{e.setCancelled(true);return;}
                 if (is.getValue() != null)
                     is.getValue().run((Player) e.getWhoClicked());
                 return;
