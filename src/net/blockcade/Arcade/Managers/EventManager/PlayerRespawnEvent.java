@@ -35,11 +35,19 @@ public class PlayerRespawnEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     private Player player;
+    private Player killer;
     private boolean eliminated;
     private ItemStack[] inventoryContents;
 
     public PlayerRespawnEvent(Player player, boolean eliminated, ItemStack[] inventoryContents) {
         this.player = player;
+        this.eliminated = eliminated;
+        this.inventoryContents = inventoryContents;
+    }
+
+    public PlayerRespawnEvent(Player player, Player killer, boolean eliminated, ItemStack[] inventoryContents) {
+        this.player = player;
+        this.killer=killer;
         this.eliminated = eliminated;
         this.inventoryContents = inventoryContents;
     }
@@ -50,6 +58,10 @@ public class PlayerRespawnEvent extends Event {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public Player getKiller() {
+        return killer;
     }
 
     public boolean isEliminated() {

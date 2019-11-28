@@ -176,6 +176,10 @@ public class playerDeathEvent implements Listener {
 
     @EventHandler
     public void EntityDamageEvent(EntityDamageEvent e) {
+        if(e.getEntity().getLastDamageCause() instanceof Player){
+            EntityDamageByEntityEvent last_damager = (EntityDamageByEntityEvent)e.getEntity().getLastDamageCause();
+            Bukkit.broadcastMessage("Last attack by "+last_damager.getDamager());
+        }
         if(e.getEntity().getType().equals(ARROW))e.setCancelled(true);
         if(game.hasModule(MAX_DAMAGE_HEIGHT)&&e.getEntity().getLocation().getY()>=game.getMaxDamageHeight()){e.setCancelled(true);return;}
         if(game.hasModule(NO_FALL_DAMAGE)&&e.getCause().equals(EntityDamageEvent.DamageCause.FALL)){e.setCancelled(true);return;}
@@ -267,7 +271,7 @@ public class playerDeathEvent implements Listener {
                         God(player, true);
                         player.getInventory().setArmorContents(armor);
 
-                        Bukkit.getPluginManager().callEvent(new PlayerRespawnEvent(player, false,inventoryContent));
+                        Bukkit.getPluginManager().callEvent(new PlayerRespawnEvent(player,(Player)(damager instanceof Player ?damager:null), false,inventoryContent));
                         new BukkitRunnable() {
                             int invulnerable = 8;
 
