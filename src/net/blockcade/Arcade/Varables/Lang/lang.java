@@ -27,20 +27,20 @@
 package net.blockcade.Arcade.Varables.Lang;
 
 public enum lang {
-    GAME_PLAYER_JOIN("&aJoin> &7Welcome &9%s&7, ( &9%s &7/ &9%s &7) for game to start"),
-    GAME_PLAYER_JOIN_STARTING("&aJoin> &7Welcome &9%s&7, ( &9%s &7/ &9%s &7)"),
 
-    GAME_BEGIN_IN("&aGame> &7The game will begin in &6%s&7 seconds."),
-    GAME_TEAM_ASSIGNED("&aGame> &7You have been assigned to &e%s&7 team."),
+    GAME_PLAYER_JOIN("&a&lJOIN &9%s&7 has joined the lobby ( &61&7 / &68&7 )."),
+    GAME_PLAYER_JOIN_STARTING("&a&lJOIN &9%s&7 has joined the lobby ( &61&7 / &68&7 )."),
 
-    GAME_STOPPED_ADMIN("&aGame> &7The game has been &cstopped&7 by an Administrator."),
-    GAME_FINISHED("&aGame> &7The game has finished, returning to lobby."),
+    GAME_BEGIN_IN("&a&lGAME &7The game will begin in &6%s&7 seconds."),
+    GAME_TEAM_ASSIGNED("&a&lTEAM &7You have been assigned to &b&l%s&7 team"),
 
-    GAME_CORE_DESTROYED("%s&c team's core has been destroyed. They can no longer respawn"),
+    GAME_STOPPED_ADMIN("&c&lGAME &7Game stopped by an Administrator"),
+    GAME_FINISHED("&9&lGAME &7The game has finished. Returned to lobby."),
 
-    BLOCK_NOT_BREAKABLE_SABOTAGE("&cHey! That's your core."),
+
     BLOCK_NOT_BREAKABLE("&cYou may only break blocks placed by players."),
     CHEST_TEAM_NOT_ELIMINATED("&cYou may not open this chest until &e%s&c team is eliminated.");
+
     private String message;
 
     public String get() {

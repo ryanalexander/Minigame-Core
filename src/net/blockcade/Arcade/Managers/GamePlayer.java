@@ -5,7 +5,9 @@ import net.blockcade.Arcade.Main;
 import net.blockcade.Arcade.Managers.EventManager.PlayerCombatLogEvent;
 import net.blockcade.Arcade.Managers.EventManager.PlayerDeathEvent;
 import net.blockcade.Arcade.Utils.Formatting.Text;
+import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameName;
+import net.blockcade.Arcade.Varables.TeamColors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -32,6 +34,13 @@ public class GamePlayer implements Listener {
     private boolean independent;
     private Player player;
 
+    // Core Statistics (DO NOT EDIT)
+    private int CORE_wins = 0;
+    private int CORE_losses = 0;
+    private int CORE_kills = 0;
+    private int CORE_final_kills = 0;
+    private int CORE_deaths = 0;
+
     private long experience = 0;
     private int level = 0;
 
@@ -46,6 +55,8 @@ public class GamePlayer implements Listener {
     private long last_combat = 0;
     private GamePlayer last_combat_player=null;
 
+    private TeamColors team=null;
+
     private boolean eliminate=false;
 
     public GamePlayer(Game game, boolean independent){
@@ -56,6 +67,8 @@ public class GamePlayer implements Listener {
     public GamePlayer(Player player){
         GamePlayers.put(player,this);
         this.player=player;
+        if(team==null&&game.hasModule(GameModule.TEAMS)&&game.TeamManager().hasTeam(player))team=game.TeamManager().getTeam(player);
+
         if(!hasStatistic(game.getGameName())){
             System.out.println("New player - Creating statistic");
             Main.getSqlConnection().query(String.format("INSERT INTO `player_statistics` (player_uuid,game_enum) VALUES ('%s','%s');",player.getUniqueId(),game.getGameName().name()),true);
@@ -117,6 +130,10 @@ public class GamePlayer implements Listener {
         this.player = player;
     }
 
+    public void setTeam(TeamColors team) {
+        this.team = team;
+    }
+
     public int getDeaths() {
         return deaths;
     }
@@ -137,7 +154,32 @@ public class GamePlayer implements Listener {
         return highest_killstreak;
     }
 
+    public TeamColors getTeam() {
+        if(team==null&&game.hasModule(GameModule.TEAMS)&&game.TeamManager().hasTeam(player))team=game.TeamManager().getTeam(player);
+        return team;
+    }
+
     public void remove() {GamePlayers.remove(this.getPlayer());}
+
+    public int getCORE_deaths() {
+        return CORE_deaths+deaths;
+    }
+
+    public int getCORE_final_kills() {
+        return CORE_final_kills;
+    }
+
+    public int getCORE_kills() {
+        return CORE_kills+kills;
+    }
+
+    public int getCORE_losses() {
+        return CORE_losses;
+    }
+
+    public int getCORE_wins() {
+        return CORE_wins;
+    }
 
     // Player access methods
     public void sendMessage(String message){ Text.sendMessage(this.player,message, Text.MessageType.TEXT_CHAT);}
@@ -159,10 +201,22 @@ public class GamePlayer implements Listener {
 
     public boolean hasStatistic(GameName game){
         try {
-            ResultSet r = Main.getSqlConnection().query(String.format("SELECT `id` FROM `player_statistics` WHERE `uuid`='%s' AND `game_enum`='%s' LIMIT 1;", player.getUniqueId(), game.name()));
+            ResultSet r = Main.getSqlConnection().query(String.format("SELECT `id` FROM `player_statistics` WHERE `player_uuid`='%s' AND `game_enum`='%s' LIMIT 1;", player.getUniqueId(), game.name()));
             if(r==null||r.getFetchSize()<1){return false;}
+            try {
+                r.first();
+                CORE_wins = r.getInt("wins");
+                CORE_losses = r.getInt("losses");
+                CORE_kills = r.getInt("kills");
+                CORE_final_kills = r.getInt("final_kills");
+                CORE_deaths = r.getInt("deaths");
+            }catch (Exception e){
+                e.printStackTrace();
+                System.out.println("Failed to cache statistic for "+player.getUniqueId());
+            }
             return true;
         }catch (SQLException e){
+            e.printStackTrace();
             return false;
         }
     }

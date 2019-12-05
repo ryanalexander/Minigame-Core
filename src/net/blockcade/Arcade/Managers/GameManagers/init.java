@@ -111,7 +111,7 @@ public class init {
             player.setGameMode(GameMode.ADVENTURE);
             player.setVelocity(new Vector(0,0,0));
             player.getInventory().setArmorContents(game.TeamManager().getArmor(game.TeamManager().getTeam(player)));
-            player.teleport(game.TeamManager().getSpawn(payload.getValue()));
+            //player.teleport(game.TeamManager().getSpawn(payload.getValue()));
             player.setVelocity(new Vector(0,0,0));
             player.setLevel(0);
             player.getEnderChest().clear();
@@ -123,7 +123,7 @@ public class init {
             for(PotionEffect effect:player.getActivePotionEffects())
                 player.removePotionEffect(effect.getType());
             for (Player p : Bukkit.getOnlinePlayers())
-                p.showPlayer(player);
+                p.showPlayer(game.handler(),player);
             player.setGameMode(GameMode.SURVIVAL);
         }
         Bukkit.getServer().getPluginManager().callEvent(new GameStartEvent());

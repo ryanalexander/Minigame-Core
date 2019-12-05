@@ -264,7 +264,7 @@ public class playerDeathEvent implements Listener {
                         player.setLevel(0);
                         player.setVelocity(new Vector(0, 0, 0));
                         player.teleport(teamSpawn);
-                        player.setGameMode(GameMode.SURVIVAL);
+                        if(game.GameState().equals(GameState.IN_GAME)){player.setGameMode(GameMode.SURVIVAL);}else{player.setGameMode(GameMode.ADVENTURE);}
                         player.setAllowFlight(false);
                         player.setFlying(false);
 

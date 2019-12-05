@@ -42,10 +42,12 @@ package net.blockcade.Arcade.Managers.GameManagers;
 
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Main;
+import net.blockcade.Arcade.Managers.GamePlayer;
 import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Utils.SQL;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.GameType;
+import net.blockcade.Arcade.Varables.Lang.lang;
 import net.blockcade.Arcade.Varables.TeamColors;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -84,16 +86,27 @@ public class stop {
     public void doFinishGame(Game game, boolean stop) {
         if (game.GameType().equals(GameType.ELIMINATE)||game.GameType().equals(GameType.DESTROY)) {
             TeamColors winner = game.TeamManager().getActive_teams().get(0);
-            new BukkitRunnable(){
-                @Override
-                public void run() {
-                    SQL sql =new SQL(game.handler().getConfig().getString("sql.host"),3306,game.handler().getConfig().getString("sql.user"),game.handler().getConfig().getString("sql.pass"),"games");
-                }
-            }.runTaskAsynchronously(game.handler());
+            SQL sql =new SQL(game.handler().getConfig().getString("sql.host"),3306,game.handler().getConfig().getString("sql.user"),game.handler().getConfig().getString("sql.pass"),"games");
             Bukkit.broadcastMessage(Text.format(String.format("&eCongratulations to %s&e team! You won!", game.TeamManager().getTeamColor(winner) + winner)));
             for (HashMap.Entry<Player, TeamColors> ent : game.TeamManager().getPlayers().entrySet()) {
+                GamePlayer player = GamePlayer.getGamePlayer(ent.getKey());
+                new BukkitRunnable(){
+                    @Override
+                    public void run() {
+                        // TODO Use configuration instead of static
+                        sql.query(String.format("UPDATE `player_statistics` SET `wins` = '%s' AND `losses` = '%s' AND `kills` = '%s' AND `final_kills` = '%s' AND `deaths` = '%s' WHERE `player_uuid`='%s';",
+                                player.getCORE_wins()+(winner.equals(game.TeamManager().getTeam(player.getPlayer()))?1:0),
+                                player.getCORE_losses()+(winner.equals(game.TeamManager().getTeam(player.getPlayer()))?0:1),
+                                player.getCORE_kills(),
+                                player.getCORE_final_kills(),
+                                player.getCORE_deaths(),
+                                player.getPlayer().getUniqueId()
+                        ),true);
+                    }
+                }.runTaskAsynchronously(game.handler());
                 if (ent.getValue().equals(winner)) {
-                    //Text.sendMessage(ent.getKey(),"&6VICTORY", Text.MessageType.TITLE);
+                    Text.sendMessage(ent.getKey(),"&6VICTORY", Text.MessageType.TITLE);
+                    Text.sendMessage(ent.getKey(), "&aYou are the WINNER!", Text.MessageType.SUBTITLE);
                     Location loc = ent.getKey().getLocation();
                     Firework fw = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
                     FireworkMeta fwm = fw.getFireworkMeta();
@@ -119,7 +132,7 @@ public class stop {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    player.sendMessage(Text.format("&aGame> &7The game has finished."));
+                    player.sendMessage(Text.format(lang.GAME_FINISHED.get()));
                     player.kickPlayer("[GAMESTATE] The game has finished");
                 }
                 game.stop(false);

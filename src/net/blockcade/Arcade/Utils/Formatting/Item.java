@@ -104,7 +104,7 @@ public class Item implements Listener {
         im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
     }
 
-    public void setLore(String[] lines) {
+    public void setLore(String... lines){
         ArrayList<String> lines2 = new ArrayList<>();
         for (String line : lines) {
             lines2.add(Text.format(line));
