@@ -26,8 +26,10 @@
 
 package net.blockcade.Arcade.Commands;
 
+import net.blockcade.Arcade.Managers.GamePlayer;
 import net.blockcade.Arcade.Utils.GameUtils.MCTInstance;
 import net.blockcade.Arcade.Utils.Formatting.Text;
+import net.blockcade.Arcade.Varables.Ranks;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -47,8 +49,8 @@ public class mct implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String arg, String[] args) {
-        if (!(sender instanceof Player) && sender.isOp()) {
-            sender.sendMessage(Text.format("&cNo Permission"));
+        if (!sender.isOp()&& GamePlayer.getGamePlayer((Player)sender).getRank().getLevel()< Ranks.HELPER.getLevel()) {
+            sender.sendMessage(Text.format("&cYou must be %s&c or higher to execute that command.",Ranks.HELPER.getFormatted()));
             return false;
         }
         if (!(sender instanceof Player)) {

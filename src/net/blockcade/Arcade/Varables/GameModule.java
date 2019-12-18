@@ -29,12 +29,15 @@ public enum GameModule {
      * NO_CRAFTING - Prevent players from crafting items
      * NO_SMELTING - Prevent players from smelting items
      * NO_HUNGER - Prevent players from losing hunger
+     * NO_WEATHER_CHANGE - Prevent natural weather changing
      *
      * VOID_DEATH - Instantly kill players once they are in the void
      *
      * ALLStATE_JOIN - Allow players to join the game regardless of the state (Note: If state is Disabled they will not be able to join)
      *
      * CHAT_MANAGER - Will the plugin format chat (If disabled, you alternative will need to follow guidelines, check with superior
+     *
+     * ERROR_CATCHER - This will watch the game and ensure that all progression markers are met as expected. If a major stage fails all players will be returned to the lobby.
      */
     START_MECHANISM,
     CHEST_BLOCK,
@@ -53,5 +56,6 @@ public enum GameModule {
     MAX_DAMAGE_HEIGHT,
     @Deprecated
     BOUNTIES,
-    NO_WEATHER_CHANGE
+    NO_WEATHER_CHANGE,
+    ERROR_CATCHER
 }

@@ -47,6 +47,8 @@ import java.util.List;
 
 public class Spectator implements Listener {
 
+    private static int spectator_time = 5;
+
     private static List<Player> spectators = new ArrayList<>();
     private static HashMap<Player, TeamColors> spectator_teams = new HashMap<>();
 
@@ -118,4 +120,11 @@ public class Spectator implements Listener {
             event.setCancelled(true);
     }
 
+    public static void setSpectatorTime(int spectator_time) {
+        Spectator.spectator_time = spectator_time;
+    }
+
+    public static int getSpectatorTime() {
+        return spectator_time;
+    }
 }

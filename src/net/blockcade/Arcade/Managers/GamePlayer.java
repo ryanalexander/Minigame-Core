@@ -7,11 +7,13 @@ import net.blockcade.Arcade.Managers.EventManager.PlayerDeathEvent;
 import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameName;
+import net.blockcade.Arcade.Varables.Ranks;
 import net.blockcade.Arcade.Varables.TeamColors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,19 +22,26 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.UUID;
 
 public class GamePlayer implements Listener {
 
     private static HashMap<Player,GamePlayer> GamePlayers=new HashMap<>();
     private static Game game;
 
-    private boolean independent;
     private Player player;
+    private String name;
+    private UUID uuid;
+
+    private Ranks rank=Ranks.MEMBER;
+
+    private boolean independent;
 
     // Core Statistics (DO NOT EDIT)
     private int CORE_wins = 0;
@@ -67,17 +76,28 @@ public class GamePlayer implements Listener {
     public GamePlayer(Player player){
         GamePlayers.put(player,this);
         this.player=player;
-        if(team==null&&game.hasModule(GameModule.TEAMS)&&game.TeamManager().hasTeam(player))team=game.TeamManager().getTeam(player);
+        if(game.hasModule(GameModule.TEAMS)&&team==null&&game.TeamManager().hasTeam(player))team=game.TeamManager().getTeam(player);
 
-        if(!hasStatistic(game.getGameName())){
-            System.out.println("New player - Creating statistic");
-            Main.getSqlConnection().query(String.format("INSERT INTO `player_statistics` (player_uuid,game_enum) VALUES ('%s','%s');",player.getUniqueId(),game.getGameName().name()),true);
-        }
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                BuildPlayer();
+
+                if(!hasStatistic(game.getGameName())){
+                    System.out.println("New player - Creating statistic");
+                    Main.getSqlConnection().query(String.format("INSERT INTO `player_statistics` (player_uuid,game_enum) VALUES ('%s','%s');",player.getUniqueId(),game.getGameName().name()),true);
+                }
+            }
+        }.runTaskAsynchronously(game.handler());
     }
 
     public boolean isCombat() { return !((last_combat-System.currentTimeMillis())<-10000);}
     public long getCombatTime() {return isCombat()?(10000+(last_combat-System.currentTimeMillis())):0;}
     public GamePlayer getCombatPlayer() {return last_combat_player;}
+
+    public UUID getUuid() {
+        return uuid;
+    }
 
     public int getLevel() {
         return this.level;
@@ -181,6 +201,14 @@ public class GamePlayer implements Listener {
         return CORE_wins;
     }
 
+    public Ranks getRank() {
+        return rank;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     // Player access methods
     public void sendMessage(String message){ Text.sendMessage(this.player,message, Text.MessageType.TEXT_CHAT);}
     public void sendActionBar(String message){ Text.sendMessage(this.player,message, Text.MessageType.ACTION_BAR);}
@@ -240,6 +268,26 @@ public class GamePlayer implements Listener {
             }
         }
         remove();
+    }
+
+    private void BuildPlayer() {
+        FileConfiguration config = Main.getPlugin(Main.class).getConfig();
+        String query=String.format("SELECT * FROM `players` WHERE `username`='%s' LIMIT 1;",this.getPlayer().getName());
+        ResultSet results = Main.getSqlConnection().query(query);
+        try {
+            while(results.next()){
+                this.name=results.getString("username");
+                this.rank=(Ranks.valueOf(results.getString("rank").toUpperCase()));
+                this.level=results.getInt("level");
+                this.uuid=(UUID.fromString(results.getString("uuid")));
+            }
+            return;
+        }catch (SQLException e){
+            System.out.println("| ---------------------------- |");
+            System.out.println("|  This error was posted by GamePlayer.java BuildPlayer");
+            e.printStackTrace();
+            System.out.println("| ---------------------------- |");
+        }
     }
 
     @EventHandler

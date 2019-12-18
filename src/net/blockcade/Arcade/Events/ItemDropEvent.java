@@ -44,8 +44,12 @@ import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameState;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
@@ -66,6 +70,17 @@ public class ItemDropEvent implements Listener {
             e.getItemDrop().getItemStack().getType().name().toUpperCase().contains("SHOVEL")||
             e.getItemDrop().getItemStack().getType().name().toUpperCase().contains("SHEARS")
             )
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void ItemPickupEvent(EntityPickupItemEvent e){
+        if(e.getEntity() instanceof Player) {
+            Player player = (Player)e.getEntity();
+            player.getInventory().addItem(e.getItem().getItemStack());
+            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, SoundCategory.NEUTRAL,0.2f,0.2f);
+            e.getItem().remove();
             e.setCancelled(true);
         }
     }

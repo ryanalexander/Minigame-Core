@@ -64,18 +64,17 @@ public class NCPHandler implements Listener {
 
     public void banPlayer(Player player, String banData){
             bans.add(player);
-            SQL sql = new SQL("mc2.stelch.gg",3306,"root","Garcia#02","games");
-            ResultSet result = sql.query("SELECT `uuid` FROM `players` WHERE `username`='"+player.getName()+"' LIMIT 1;");
+            ResultSet result = Main.getSqlConnection().query("SELECT `uuid` FROM `players` WHERE `username`='"+player.getName()+"' LIMIT 1;");
             try {
                 result.first();
-                sql.query(String.format("DELETE FROM `player_bans` WHERE `uuid`='%s';",result.getString("uuid")),true);
-                sql.query(String.format("INSERT INTO `player_bans` (`uuid`,`reason`,`admin`,`banned_till`,`autoban_data`) VALUES ('%s','%s','%s','%s','%s');",result.getString("uuid"),"Cheating or related","Guardian",0,banData),true);
+                Main.getSqlConnection().query(String.format("DELETE FROM `player_bans` WHERE `uuid`='%s';",result.getString("uuid")),true);
+                Main.getSqlConnection().query(String.format("INSERT INTO `player_bans` (`uuid`,`reason`,`admin`,`banned_till`,`autoban_data`) VALUES ('%s','%s','%s','%s','%s');",result.getString("uuid"),"Cheating or related","Guardian",0,banData),true);
             } catch (SQLException ev) {
                 System.out.println("Failed to get UUID of player");
                 ev.printStackTrace();
             }
-            sql.query(String.format("UPDATE `players` SET `banned`='1' WHERE `username`='%s';",player.getName()),true);
-            sql.close();
+            Main.getSqlConnection().query(String.format("UPDATE `players` SET `banned`='1' WHERE `username`='%s';",player.getName()),true);
+            Main.getSqlConnection().close();
             new BukkitRunnable(){
                 @Override
                 public void run() {

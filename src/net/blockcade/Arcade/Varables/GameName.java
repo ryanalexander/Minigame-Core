@@ -7,9 +7,10 @@ import org.bukkit.Material;
  * This is for public release games, when developing use "testing"
  */
 public enum GameName {
-    BEDBATTLES(Material.RED_BED,"Bed Battles","&fFight to defend your bed\nand be the last player standing.","BBW", ChatColor.RED,16),
+    BEDBATTLES(Material.RED_BED,"Bed Battles","&e&lProtect your bed and destroy the enemy beds.\n&e&lUpgrade yourself and your team by collecting\n&e&lIron, Gold, Emerald and Diamond from generators\n&e&lto access powerful upgrades.","BBW", ChatColor.RED,16),
     CAPTURE(Material.BLUE_BANNER, "Capture The Flag","Capture the enemy team's\nflag three times to win.", "CTF",ChatColor.AQUA,16),
     ARENA(Material.GOLDEN_SWORD, "Arena","Free for all PvP\nwith upgrades & abilities", "AR",ChatColor.RED,100),
+    TESTING(Material.BOW,"Testing","testing gamemode","TEST",ChatColor.WHITE,100),
     HUB(Material.CLOCK,"HUB","","HUB",ChatColor.WHITE,25);
     Material material;
     String name;

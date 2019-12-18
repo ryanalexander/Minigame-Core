@@ -26,30 +26,50 @@
 
 package net.blockcade.Arcade;
 
+import net.blockcade.Arcade.Commands.debug;
 import net.blockcade.Arcade.Commands.mct;
 import net.blockcade.Arcade.Utils.Formatting.Item;
 import net.blockcade.Arcade.Utils.NCPHandler;
 import net.blockcade.Arcade.Utils.SQL;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import static net.blockcade.Arcade.Utils.JavaUtils.fixLadder;
 
 public class Main extends JavaPlugin {
 
     public static Networking networking;
+    public static long LAST_START_TIME;
     private static SQL sqlConnection;
 
     @EventHandler
     public void onEnable() {
+        LAST_START_TIME=System.currentTimeMillis();
         sqlConnection=new SQL(getConfig().getString("sql.host"),3306,getConfig().getString("sql.user"),getConfig().getString("sql.pass"),getConfig().getString("sql.database"));
-
         networking = new Networking(this);
         networking.init();
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new Item(), this);
         pm.registerEvents(new NCPHandler(), this);
         getCommand("mct").setExecutor(new mct(this));
+        getCommand("debug").setExecutor(new debug(null));
+
+        for(Player player : Bukkit.getOnlinePlayers()){
+            new PlayerJoinEvent(player, null).callEvent();
+        }
+
+        // Fix Box Bounding
+        fixLadder();
+    }
+
+    @Override
+    public void onDisable() {
+        sqlConnection.close();
+        super.onDisable();
     }
 
     public static SQL getSqlConnection() {

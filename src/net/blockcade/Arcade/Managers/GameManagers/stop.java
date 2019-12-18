@@ -42,9 +42,9 @@ package net.blockcade.Arcade.Managers.GameManagers;
 
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Main;
+import net.blockcade.Arcade.Managers.EventManager.GameEndEvent;
 import net.blockcade.Arcade.Managers.GamePlayer;
 import net.blockcade.Arcade.Utils.Formatting.Text;
-import net.blockcade.Arcade.Utils.SQL;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.GameType;
 import net.blockcade.Arcade.Varables.Lang.lang;
@@ -84,17 +84,16 @@ public class stop {
     }
 
     public void doFinishGame(Game game, boolean stop) {
+        Bukkit.getPluginManager().callEvent(new GameEndEvent());
         if (game.GameType().equals(GameType.ELIMINATE)||game.GameType().equals(GameType.DESTROY)) {
             TeamColors winner = game.TeamManager().getActive_teams().get(0);
-            SQL sql =new SQL(game.handler().getConfig().getString("sql.host"),3306,game.handler().getConfig().getString("sql.user"),game.handler().getConfig().getString("sql.pass"),"games");
             Bukkit.broadcastMessage(Text.format(String.format("&eCongratulations to %s&e team! You won!", game.TeamManager().getTeamColor(winner) + winner)));
             for (HashMap.Entry<Player, TeamColors> ent : game.TeamManager().getPlayers().entrySet()) {
                 GamePlayer player = GamePlayer.getGamePlayer(ent.getKey());
                 new BukkitRunnable(){
                     @Override
                     public void run() {
-                        // TODO Use configuration instead of static
-                        sql.query(String.format("UPDATE `player_statistics` SET `wins` = '%s' AND `losses` = '%s' AND `kills` = '%s' AND `final_kills` = '%s' AND `deaths` = '%s' WHERE `player_uuid`='%s';",
+                        Main.getSqlConnection().query(String.format("UPDATE `player_statistics` SET `wins` = '%s', `losses` = '%s', `kills` = '%s', `final_kills` = '%s', `deaths` = '%s' WHERE `player_uuid`='%s';",
                                 player.getCORE_wins()+(winner.equals(game.TeamManager().getTeam(player.getPlayer()))?1:0),
                                 player.getCORE_losses()+(winner.equals(game.TeamManager().getTeam(player.getPlayer()))?0:1),
                                 player.getCORE_kills(),
@@ -127,7 +126,24 @@ public class stop {
                 }
             }
         }
-
+        if(game.GameType().equals(GameType.CUSTOM)){
+            for(Player p : Bukkit.getOnlinePlayers()) {
+                GamePlayer player = GamePlayer.getGamePlayer(p);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Main.getSqlConnection().query(String.format("UPDATE `player_statistics` SET `wins` = '%s', `losses` = '%s', `kills` = '%s', `final_kills` = '%s', `deaths` = '%s' WHERE `player_uuid`='%s';",
+                                player.getCORE_wins(),
+                                player.getCORE_losses(),
+                                player.getCORE_kills(),
+                                player.getCORE_final_kills(),
+                                player.getCORE_deaths(),
+                                player.getPlayer().getUniqueId()
+                        ), true);
+                    }
+                }.runTaskAsynchronously(game.handler());
+            }
+        }
         if (stop) new BukkitRunnable() {
             @Override
             public void run() {

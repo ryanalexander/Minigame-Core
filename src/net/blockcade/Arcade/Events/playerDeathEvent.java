@@ -43,13 +43,15 @@ package net.blockcade.Arcade.Events;
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Managers.EventManager.PlayerRespawnEvent;
 import net.blockcade.Arcade.Managers.GamePlayer;
-import net.blockcade.Arcade.Utils.GameUtils.Spectator;
 import net.blockcade.Arcade.Utils.Formatting.Text;
+import net.blockcade.Arcade.Utils.GameUtils.Spectator;
 import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.TeamColors;
-import org.bukkit.*;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -74,7 +76,7 @@ public class playerDeathEvent implements Listener {
     private static Game game;
 
     public playerDeathEvent(Game game) {
-        this.game = game;
+        playerDeathEvent.game = game;
     }
 
     private static ArrayList<Entity> invulnerable = new ArrayList<>();
@@ -86,11 +88,18 @@ public class playerDeathEvent implements Listener {
             "%s&7 has been rekt by %s"
     };
 
-    public static String[] fall = new String[]{
+    public static String[] fall_self = new String[]{
             "%s&7 fell and hit their head",
-            "&7Balance is not %s&7's strong point",
+            "&7%s&7's balance was not up to standard",
             "%s&7 didn't notice the edge",
-            "%s&7 was given swift end by the ground"
+            "%s&7 is on the highway to hell",
+            "%s&7 followed the path to &c&lTHE NETHER!"
+    };
+    public static String[] fall = new String[]{
+            "%s&7 fell and hit their head with the assistance of %s",
+            "&7%s&7 was lead to their death by %s",
+            "%s&7 didn't notice %s&7 pushing them to their death",
+            "%s&7 was given a rocky road to death by %s"
     };
 
     private String[] entity_explode = new String[]{
@@ -158,6 +167,11 @@ public class playerDeathEvent implements Listener {
         switch (e.getEntityType()) {
             case PLAYER:
                 Player player = (Player) e.getEntity();
+                GamePlayer gamePlayer = GamePlayer.getGamePlayer(player);
+                if(game.TeamManager().getTeam(resolveDamager(e.getDamager())).equals(gamePlayer.getTeam())){
+                    e.setCancelled(true);
+                    return;
+                }
                 if ((player.getHealth() - e.getFinalDamage()) <= 1) {
                     Bukkit.getPluginManager().callEvent(new net.blockcade.Arcade.Managers.EventManager.PlayerDeathEvent(player,e.getCause(),e.getDamager()));
                     if(!game.hasModule(GameModule.DEATH_MANAGER))return;
@@ -168,7 +182,7 @@ public class playerDeathEvent implements Listener {
                     killer.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.MASTER,0.5f, 0.5f);
                     player.setHealth(20);
                     e.setCancelled(true);
-                    doDeath(player, String.format(messages[0], player.getDisplayName(), resolveDamager(e.getDamager()).getDisplayName()), e.getDamager());
+                    doDeath(gamePlayer, String.format(messages[0], player.getDisplayName(), resolveDamager(e.getDamager()).getDisplayName()), e.getDamager());
                 }
                 break;
         }
@@ -176,10 +190,9 @@ public class playerDeathEvent implements Listener {
 
     @EventHandler
     public void EntityDamageEvent(EntityDamageEvent e) {
-        if(e.getEntity().getLastDamageCause() instanceof Player){
-            EntityDamageByEntityEvent last_damager = (EntityDamageByEntityEvent)e.getEntity().getLastDamageCause();
-            Bukkit.broadcastMessage("Last attack by "+last_damager.getDamager());
-        }
+        /*
+         * Actual Code
+         */
         if(e.getEntity().getType().equals(ARROW))e.setCancelled(true);
         if(game.hasModule(MAX_DAMAGE_HEIGHT)&&e.getEntity().getLocation().getY()>=game.getMaxDamageHeight()){e.setCancelled(true);return;}
         if(game.hasModule(NO_FALL_DAMAGE)&&e.getCause().equals(EntityDamageEvent.DamageCause.FALL)){e.setCancelled(true);return;}
@@ -194,6 +207,7 @@ public class playerDeathEvent implements Listener {
             case PLAYER:
                 if (e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK))return;
                 Player player = (Player) e.getEntity();
+                GamePlayer gamePlayer = GamePlayer.getGamePlayer(player);
                 if (Spectator.isSpectator(player)) {
                     e.setCancelled(true);
                     return;
@@ -203,13 +217,13 @@ public class playerDeathEvent implements Listener {
                     player.setHealth(20);
                     if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID) || e.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
                         Random rand = new Random();
-                        doDeath(player, String.format(fall[rand.nextInt(fall.length)], player.getDisplayName(), e.getCause()), null);
+                        doDeath(gamePlayer, String.format(fall[rand.nextInt(fall.length)], player.getDisplayName(), gamePlayer.getCombatPlayer().getName()), null);
                     } else if (e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)) {
                         Random rand = new Random();
-                        doDeath(player, String.format(entity_explode[rand.nextInt(entity_explode.length)], player.getDisplayName(), e.getCause()), null);
+                        doDeath(gamePlayer, String.format(entity_explode[rand.nextInt(entity_explode.length)], player.getDisplayName(), e.getCause()), null);
                     } else {
                         Random rand = new Random();
-                        doDeath(player, String.format(messages[rand.nextInt(messages.length)], player.getDisplayName(), e.getCause()), null);
+                        doDeath(gamePlayer, String.format(messages[rand.nextInt(messages.length)], player.getDisplayName(), e.getCause()), null);
                     }
                 }
                 break;
@@ -219,7 +233,8 @@ public class playerDeathEvent implements Listener {
     }
 
     @EventHandler
-    public static void doDeath(Player player, String message, Entity damager) {
+    public static void doDeath(GamePlayer gamePlayer, String message, Entity damager) {
+        Player player = gamePlayer.getPlayer();
         if(!game.hasModule(GameModule.DEATH_MANAGER))return;
         TeamColors team = game.TeamManager().getTeam(player);
 
@@ -238,7 +253,7 @@ public class playerDeathEvent implements Listener {
             ItemStack[] inventoryContent = player.getInventory().getContents().clone();
             player.getInventory().clear();
             new BukkitRunnable() {
-                int timer = 10;
+                int timer = Spectator.getSpectatorTime()*2;
 
                 @Override
                 public void run() {
@@ -252,18 +267,10 @@ public class playerDeathEvent implements Listener {
                         Text.sendMessage(player, "", Text.MessageType.SUBTITLE);
                         Spectator.removeSpectator(player, game);
                         Text.sendMessage(player, " ", Text.MessageType.TITLE);
-                        FileConfiguration config = game.handler().getConfig();
-                        Double x = Double.parseDouble(config.getString(String.format(("maps.%s.spawn.%s.x"), "world", team)));
-                        Double y = Double.parseDouble(config.getString(String.format(("maps.%s.spawn.%s.y"), "world", team)));
-                        Double z = Double.parseDouble(config.getString(String.format(("maps.%s.spawn.%s.z"), "world", team)));
-                        Float yaw = Float.parseFloat(config.getString(String.format(("maps.%s.spawn.%s.yaw"), "world", team)));
-                        Float pitch = Float.parseFloat("0.0");
-                        Location teamSpawn = new Location(player.getWorld(), x, y, z, yaw, pitch);
 
                         player.setHealth(20);
                         player.setLevel(0);
                         player.setVelocity(new Vector(0, 0, 0));
-                        player.teleport(teamSpawn);
                         if(game.GameState().equals(GameState.IN_GAME)){player.setGameMode(GameMode.SURVIVAL);}else{player.setGameMode(GameMode.ADVENTURE);}
                         player.setAllowFlight(false);
                         player.setFlying(false);

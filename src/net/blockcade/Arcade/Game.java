@@ -14,11 +14,15 @@
 package net.blockcade.Arcade;
 
 import net.blockcade.Arcade.Events.*;
-import net.blockcade.Arcade.Managers.*;
+import net.blockcade.Arcade.Managers.BlockManager;
+import net.blockcade.Arcade.Managers.EntityManager;
 import net.blockcade.Arcade.Managers.EventManager.GameRegisterEvent;
 import net.blockcade.Arcade.Managers.GameManagers.init;
 import net.blockcade.Arcade.Managers.GameManagers.start;
 import net.blockcade.Arcade.Managers.GameManagers.stop;
+import net.blockcade.Arcade.Managers.ScoreboardManager;
+import net.blockcade.Arcade.Managers.TeamManager;
+import net.blockcade.Arcade.Utils.ErrorCatcher;
 import net.blockcade.Arcade.Utils.GameUtils.Spectator;
 import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameName;
@@ -34,6 +38,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Random;
 
 import static org.bukkit.entity.EntityType.ITEM_FRAME;
 import static org.bukkit.entity.EntityType.PLAYER;
@@ -92,7 +98,7 @@ public class Game {
      * @param min_players Minimum players for game to start (Naturally)
      * @param max_players Max players the game will allow
      * @param handler     Handler for game
-     * @param map         Default map for game
+     * @param map         Default map for game (if null a random map will be used)
      * @since 14/07/2019
      */
     public Game(String title, GameType gameType, int min_players, int max_players, JavaPlugin handler, World map) {
@@ -101,13 +107,25 @@ public class Game {
         this.min_players = min_players;
         this.max_players = max_players;
         this.handler = handler;
-        this.map = map;
         this.gameModules = new ArrayList<>();
         this.entityManager = new EntityManager(this);
         this.teamManager = new TeamManager(this);
         this.blockManager = new BlockManager(this);
         this.gameState = GameState.DISABLED;
         this.AutoStart = true;
+        this.map = map;
+        new ErrorCatcher(this);
+        if(map==null) {
+            ArrayList<String> maps = new ArrayList<>();
+            for (String s : Objects.requireNonNull(Main.getPlugin(Main.class).getConfig().getConfigurationSection("maps")).getKeys(false)) {
+                maps.add(s);
+            }
+            this.map=Bukkit.getWorld(maps.get((new Random()).nextInt(maps.size())));
+            if(this.map==null){
+                this.map=Bukkit.getWorld(maps.get((new Random()).nextInt(maps.size())));
+            }
+        }
+
         Main.networking.setGame(title());
         // Remove entities
         for (Entity e : map.getEntities()) {
@@ -118,11 +136,14 @@ public class Game {
         }
         handler.getServer().getPluginManager().registerEvents(new ItemDropEvent(this),handler);
         Spectator.initializeSpectating();
+        setModule(GameModule.ERROR_CATCHER,true);
         registerEvents();
         updateGamerules();
 
         // Game registration finished. Now inform all other plugins that game has Registered
         Bukkit.getPluginManager().callEvent(new GameRegisterEvent(this));
+
+
     }
 
     /**
@@ -348,6 +369,8 @@ public class Game {
     public boolean hasModule(GameModule module){
         return this.gameModules.contains(module);
     }
+
+    public ArrayList<GameModule> getModules() {return this.gameModules;}
 
     public void setModule(GameModule module, boolean state){
         if(state){

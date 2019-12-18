@@ -42,11 +42,11 @@ package net.blockcade.Arcade.Events;
 
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Main;
+import net.blockcade.Arcade.Managers.GamePlayer;
 import net.blockcade.Arcade.Managers.ScoreboardManager;
-import net.blockcade.Arcade.Utils.JavaUtils;
-import net.blockcade.Arcade.Utils.GameUtils.Spectator;
 import net.blockcade.Arcade.Utils.Formatting.TABList;
 import net.blockcade.Arcade.Utils.Formatting.Text;
+import net.blockcade.Arcade.Utils.GameUtils.Spectator;
 import net.blockcade.Arcade.Varables.GameModule;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.Lang.lang;
@@ -67,18 +67,28 @@ public class playerJoin implements Listener {
 
     @org.bukkit.event.EventHandler
     public void playerJoin(PlayerJoinEvent e) {
-        e.getPlayer().getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(1024);
+        e.getPlayer().getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(16);
+        e.getPlayer().saveData();
         e.setJoinMessage(null);
+        GamePlayer player = GamePlayer.getGamePlayer(e.getPlayer());
         // TODO Scoreboard
-        ScoreboardManager sm = new ScoreboardManager(e.getPlayer().getName(), game);
+        ScoreboardManager sm = new ScoreboardManager(player.getPlayer().getName(),game);
+        sm.setGamePlayer(player);
         sm.enableHealthCounter();
         String name = "  BLOCKCADE  ";
         sm.addBlank();
-        sm.addLine("&a&lServer");
-        sm.addLine(" :server_name:");
+        sm.addLine("&6&lRank");
+        sm.addLine(" :RANK:");
         sm.addBlank();
-        sm.addLine(JavaUtils.center("&dblockcade.net", sm.longest_line));
-        sm.showFor(e.getPlayer());
+        sm.addLine("&b&lMap");
+        sm.addLine(" :map:");
+        sm.addBlank();
+        sm.addLine("&e&lPlayers");
+        sm.addLine(" :player_count: &7/ &f"+game.minPlayers());
+        sm.addBlank();
+        sm.addLine("&8:server_name: &8- &dblockcade.net");
+        sm.addBlank();
+        sm.showFor(player.getPlayer());
 
         TABList.sendPlayerListTab(e.getPlayer(), String.format("&fPlaying &a%s&f on &d&lBLOCKCADE&f!", game.title()), String.format("&fConnected to &a%s", Main.networking.serverName));
 

@@ -86,6 +86,13 @@ public class EntityManager {
         return EntityFunctions.get(e);
     }
 
+    public HashMap<Entity, click> FunctionEntities() {
+        return EntityFunctions;
+    }
+    public ArrayList<Entity> GameEntities() {
+        return gameEntities;
+    }
+
     public interface click {
         void run(Player param1Player);
     }

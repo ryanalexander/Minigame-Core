@@ -28,8 +28,8 @@ package net.blockcade.Arcade.Varables.Lang;
 
 public enum lang {
 
-    GAME_PLAYER_JOIN("&a&lJOIN &9%s&7 has joined the lobby ( &61&7 / &68&7 )."),
-    GAME_PLAYER_JOIN_STARTING("&a&lJOIN &9%s&7 has joined the lobby ( &61&7 / &68&7 )."),
+    GAME_PLAYER_JOIN("&a&lJOIN &9%s&7 has joined the lobby (&6%s&7/&6%s&7)."),
+    GAME_PLAYER_JOIN_STARTING("&a&lJOIN &9%s&7 has joined the lobby (&6%s&7/&6%s&7)."),
 
     GAME_BEGIN_IN("&a&lGAME &7The game will begin in &6%s&7 seconds."),
     GAME_TEAM_ASSIGNED("&a&lTEAM &7You have been assigned to &b&l%s&7 team"),

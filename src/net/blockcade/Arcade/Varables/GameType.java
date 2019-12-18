@@ -26,7 +26,7 @@
 
 package net.blockcade.Arcade.Varables;
 
-public enum GameType {
+public enum  GameType {
     CUSTOM, CAPTURE, TAG, DESTROY, ELIMINATE;
 
     GameType() {

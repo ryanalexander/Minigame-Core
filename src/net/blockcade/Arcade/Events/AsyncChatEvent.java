@@ -27,6 +27,7 @@
 package net.blockcade.Arcade.Events;
 
 import net.blockcade.Arcade.Game;
+import net.blockcade.Arcade.Managers.GamePlayer;
 import net.blockcade.Arcade.Utils.GameUtils.Spectator;
 import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.GameState;
@@ -51,11 +52,12 @@ public class AsyncChatEvent implements Listener {
     @EventHandler
     public void ChatEvent(AsyncPlayerChatEvent e) {
         if(!game.hasModule(CHAT_MANAGER))return;
+        GamePlayer player = GamePlayer.getGamePlayer(e.getPlayer());
         e.setCancelled(true);
         if (game.GameState() == GameState.IN_GAME) {
-            if (Spectator.isSpectator(e.getPlayer())) {
+            if (Spectator.isSpectator(player.getPlayer())) {
                 for (Player p : Spectator.getSpectators()) {
-                    Text.sendMessage(p, String.format("&7SPEC | &f%s&7: %s", e.getPlayer().getDisplayName(), e.getMessage()), Text.MessageType.TEXT_CHAT);
+                    Text.sendMessage(p, String.format("&7SPEC | &f%s&7: %s", player.getName(), e.getMessage()), Text.MessageType.TEXT_CHAT);
                 }
                 return;
             }
@@ -66,7 +68,7 @@ public class AsyncChatEvent implements Listener {
                 Bukkit.broadcastMessage(Text.format(String.format("&e%s&7: %s", e.getPlayer().getName(), e.getMessage())));
             }
         } else {
-            Bukkit.broadcastMessage(Text.format(String.format("&e%s&7: %s", e.getPlayer().getDisplayName(), e.getMessage())));
+            Bukkit.broadcastMessage(Text.format(String.format("&e%s&7: %s", player.getRank().getFormatted()+" "+player.getName(), e.getMessage())));
         }
     }
 

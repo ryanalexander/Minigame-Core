@@ -41,7 +41,7 @@
 package net.blockcade.Arcade.Events;
 
 import net.blockcade.Arcade.Game;
-import net.blockcade.Arcade.Varables.DeathCause;
+import net.blockcade.Arcade.Managers.GamePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -63,14 +63,13 @@ public class PlayerMoveEvent implements Listener {
         if(!game.hasModule(VOID_DEATH)){return;}
 
         if(Objects.requireNonNull(e.getTo()).getY()<=1){
+            GamePlayer player = GamePlayer.getGamePlayer(e.getPlayer());
             Random rand = new Random();
-            playerDeathEvent.doDeath(e.getPlayer(), String.format(playerDeathEvent.fall[rand.nextInt(playerDeathEvent.fall.length)], e.getPlayer().getDisplayName(), DeathCause.VOID), null);
+            if(player.getCombatPlayer()==null||player.getCombatTime()<=5000){
+                playerDeathEvent.doDeath(player, String.format(playerDeathEvent.fall_self[rand.nextInt(playerDeathEvent.fall_self.length)], e.getPlayer().getDisplayName()), null);
+                return;
+            }
+            playerDeathEvent.doDeath(player, String.format(playerDeathEvent.fall[rand.nextInt(playerDeathEvent.fall.length)], e.getPlayer().getDisplayName(), player.getCombatPlayer().getTeam().getChatColor()+" "+player.getCombatPlayer().getName()), null);
         }
-        /*
-        if (Main.GameCommand.invis_players.containsKey(e.getPlayer())) {
-            Main.GameCommand.invis_players.get(e.getPlayer()).teleport(e.getPlayer());
-            Location loc = e.getPlayer().getLocation();
-            e.getTo().getWorld().spawnParticle(Particle.DRAGON_BREATH, new Location(loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), Float.valueOf(loc.getYaw() + ""), Float.valueOf(loc.getPitch() + "")), 1, 0, 0, 0, 0);
-        }*/
     }
 }

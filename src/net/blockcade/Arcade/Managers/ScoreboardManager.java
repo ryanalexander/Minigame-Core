@@ -21,6 +21,7 @@ import net.blockcade.Arcade.Varables.TeamColors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -32,6 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ScoreboardManager {
+    private static int sbs = 0;
     private org.bukkit.scoreboard.ScoreboardManager manager;
     private String name;
     private Scoreboard board;
@@ -49,9 +51,20 @@ public class ScoreboardManager {
         this.name = name;
         this.manager = Bukkit.getServer().getScoreboardManager();
         this.board = this.manager.getNewScoreboard();
-        this.objective = this.board.registerNewObjective(Text.format(name), "dummy");
+        this.objective = this.board.registerNewObjective("SB"+sbs, "dummy",Text.format(name));
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.game = game;
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                try {
+                    ScoreboardManager.this.update();
+                }catch (Exception e){
+                    cancel();
+                }
+            }
+        }.runTaskTimer(game.handler(),0L,10L);
+        sbs++;
     }
 
     public void setGamePlayer(GamePlayer gamePlayer) {
@@ -85,7 +98,7 @@ public class ScoreboardManager {
             message = message + this.payload;
         }
 
-        this.addLine(message.replaceAll(":player_count:", Bukkit.getServer().getOnlinePlayers().size() + ""));
+        this.addLine(message);
         this.lines.put(this.counter, message);
         ++this.payload_count;
         this.update();
@@ -126,7 +139,6 @@ public class ScoreboardManager {
                 if(game.hasModule(GameModule.TEAMS)) {
                     Matcher m = Pattern.compile(":ELIMINATED_(.*):").matcher(text);
                     if (m.find()) {
-
                         String group = m.group(1);
                         TeamColors team = TeamColors.valueOf(group.toUpperCase());
                         if(game.TeamManager().getActive_teams().contains(team)) {
@@ -138,21 +150,22 @@ public class ScoreboardManager {
                     }
                 }
 
-                for(Map.Entry<String, placeholder> replacements : placeholders.entrySet()){
-                    int data = replacements.getValue().Integer(gamePlayer);
-                    text=text.replaceAll(replacements.getKey(), (data+""));
-                }
-
                 if(gamePlayer!=null) {
                     text = text.replaceAll(":KILLS:", gamePlayer.getKills() + "");
+                    text = text.replaceAll(":RANK:", gamePlayer.getRank().name() + "");
                     text = text.replaceAll(":ELIMINATIONS:", gamePlayer.getEliminations() + "");
                 }
-
+                if(game!=null){
+                    text = text.replaceAll(":map:", game.map().getName() + "");
+                }
+                text=text.replaceAll(":player_count:", Bukkit.getServer().getOnlinePlayers().size() + "")
+                        .replaceAll(":server_name:", Main.networking.serverName);
+                for(Map.Entry<String, placeholder> replacements : placeholders.entrySet()){
+                    text=text.replaceAll(replacements.getKey(), (replacements.getValue().String(gamePlayer)));
+                }
                 if ((!ChatColor.stripColor(Text.format(text)).equals(ChatColor.stripColor(str)))) {
                     this.board.resetScores(str);
                     this.objective.getScore(Text.format(text)
-                            .replaceAll(":player_count:", Bukkit.getServer().getOnlinePlayers().size() + "")
-                            .replaceAll(":server_name:", Main.networking.serverName)
                     ).setScore(pid);
                 }
             }
@@ -165,7 +178,7 @@ public class ScoreboardManager {
     }
 
     public interface placeholder {
-        int Integer(GamePlayer player);
+        String String(GamePlayer player);
     }
 
     public void showFor(Player player) {

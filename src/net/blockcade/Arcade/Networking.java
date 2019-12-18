@@ -31,6 +31,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -41,6 +43,8 @@ public class Networking {
 
     private UUID uuid = UUID.randomUUID();
     public String serverName="loading";
+
+    private String container="";
 
     private String gameState = "DISABLED";
     private String game = "";
@@ -55,6 +59,14 @@ public class Networking {
     public void init() {
         if (pool == null) {
             pool = JedisUtils.init();
+        }
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("/etc/hostname"));
+            container=reader.readLine();
+            reader.close();
+        }catch (Exception e){
+            container="NULL";
         }
 
         /**
@@ -83,6 +95,10 @@ public class Networking {
                 pushData();
             }
         }.runTaskTimer(plugin, 0L, (20 * 5));
+    }
+
+    public String getContainer() {
+        return container;
     }
 
     public String getGame() {
@@ -115,6 +131,8 @@ public class Networking {
             jedis.set(String.format("SERVER|%s|game", uuid), this.game);
             jedis.set(String.format("SERVER|%s|state", uuid), this.gameState);
             jedis.set(String.format("SERVER|%s|last_poll", uuid), Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() + "");
+
+            jedis.set(String.format("SERVER|%s|container", uuid), container);
         }
     }
 }

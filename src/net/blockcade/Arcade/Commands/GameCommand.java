@@ -30,6 +30,7 @@ import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Managers.GamePlayer;
 import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.GameState;
+import net.blockcade.Arcade.Varables.Ranks;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -48,15 +49,16 @@ public class GameCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String arg, String[] args) {
-        if (!sender.isOp()) {
-            sender.sendMessage(Text.format("&cNo Permission"));
+        if (!sender.isOp()&&GamePlayer.getGamePlayer((Player)sender).getRank().getLevel()< Ranks.HELPER.getLevel()) {
+            sender.sendMessage(Text.format("&cYou must be %s&c or higher to execute that command.",Ranks.HELPER.getFormatted()));
             return false;
         }
         if (args.length < 1) {
             sender.sendMessage(new String[]{
                     Text.format("&d----[ &cAdmin &d]----"),
                     " ",
-                    Text.format("&e- &a/game &d{start/stop/state}"),
+                    Text.format("&e- &a/game &d{start/stop/state/debug}"),
+                    Text.format("&e- &a/mct &dhelp"),
 
             });
             return false;
