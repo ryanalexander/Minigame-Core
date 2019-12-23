@@ -43,6 +43,7 @@ package net.blockcade.Arcade.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
 
@@ -54,6 +55,10 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class JavaUtils {
+
+    public static enum Direction {
+        UP, DOWN, LEFT, RIGHT
+    }
 
     public static enum TimeUnit {
         MILI("Milliseconds ",1),
@@ -84,7 +89,7 @@ public class JavaUtils {
     public static BlockFace direction(Float heading)
     {
         BlockFace strHeading = BlockFace.NORTH;
-        Hashtable<BlockFace, Float> cardinal = new Hashtable<BlockFace, Float>();
+        Hashtable<BlockFace, Float> cardinal = new Hashtable<>();
         cardinal.put(BlockFace.NORTH, new Float(0));
         cardinal.put(BlockFace.NORTH, new Float(45));
         cardinal.put(BlockFace.EAST, new Float(90));
@@ -105,6 +110,25 @@ public class JavaUtils {
             }
         }
         return strHeading;
+    }
+
+    public static Block getBlockInDirection(Direction direction, Location location){
+        if(direction.equals(Direction.DOWN)){
+            int y = (int)location.getY();
+            for(int i = y; i>=0;i--){
+                Block block = location.getWorld().getBlockAt(new Location(location.getWorld(),location.getX(),i,location.getZ()));
+                if(block.getType().equals(Material.AIR)||block.getType().equals(Material.VOID_AIR))continue;
+                return block;
+            }
+            return null;
+        }else if(direction.equals(Direction.UP)){
+            for(int i=(int)location.getY();i<255;i++){
+                Block block = location.getWorld().getBlockAt(new Location(location.getWorld(),location.getX(),i,location.getZ()));
+                if(block.getType().equals(Material.AIR)||block.getType().equals(Material.VOID_AIR))continue;
+                return block;
+            }
+        }
+        return null;
     }
 
     public static ArrayList<Material> getMatFromItemstack(ArrayList<ItemStack> items){

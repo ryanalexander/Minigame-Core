@@ -52,10 +52,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.*;
 
 import static net.blockcade.Arcade.Varables.GameModule.NO_HUNGER;
 import static net.blockcade.Arcade.Varables.GameModule.NO_SMELTING;
@@ -117,9 +114,19 @@ public class EntityInteract implements Listener {
     }
 
     @EventHandler
+    public void ArmorStandEvent(PlayerArmorStandManipulateEvent e){
+        if(game.EntityManager().GameEntity(e.getRightClicked()))e.setCancelled(true);
+        if (game.EntityManager().hasFunction(e.getRightClicked())) {
+            e.setCancelled(true);
+            game.EntityManager().EntityFunction(e.getRightClicked()).run(e.getPlayer());
+        }
+    }
+
+    @EventHandler
     public void EntityInteractEvent(PlayerInteractEntityEvent e) {
         if(e.getRightClicked().getType().equals(EntityType.SILVERFISH)){e.setCancelled(false);return;}
         if (Spectator.isSpectator(e.getPlayer())) e.setCancelled(true);
+        if(game.EntityManager().GameEntity(e.getRightClicked()))e.setCancelled(true);
         if (game.EntityManager().hasFunction(e.getRightClicked())) {
             e.setCancelled(true);
             game.EntityManager().EntityFunction(e.getRightClicked()).run(e.getPlayer());

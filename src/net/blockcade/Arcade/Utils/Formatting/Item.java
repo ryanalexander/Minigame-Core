@@ -27,6 +27,7 @@
 package net.blockcade.Arcade.Utils.Formatting;
 
 import net.blockcade.Arcade.Utils.GameUtils.Spectator;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -44,6 +45,9 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
+import static org.apache.commons.lang.Validate.notNull;
 
 public class Item implements Listener {
     public static HashMap<Item, click> actions = new HashMap<>();
@@ -140,6 +144,16 @@ public class Item implements Listener {
                 return;
             }
         }
+    }
+
+    public static ItemStack itemWithBase64(ItemStack item, String base64) {
+        notNull(item, "item");
+        notNull(base64, "base64");
+
+        UUID hashAsId = new UUID(base64.hashCode(), base64.hashCode());
+        return Bukkit.getUnsafe().modifyItemStack(item,
+                "{SkullOwner:{Id:\"" + hashAsId + "\",Properties:{textures:[{Value:\"" + base64 + "\"}]}}}"
+        );
     }
 
     @EventHandler

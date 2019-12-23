@@ -31,9 +31,11 @@ import net.blockcade.Arcade.Utils.Formatting.Item;
 import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.Lang.lang;
 import net.blockcade.Arcade.Varables.TeamColors;
+import net.minecraft.server.v1_15_R1.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -138,7 +140,7 @@ public class TeamManager {
         Item LEGGINGS = new Item(Material.LEATHER_LEGGINGS, String.format("%s&7 teams LEGGINGS", team.getChatColor() + team.name())).setLeatherColor(team.getColor());
         Item CHESTPLACE = new Item(Material.LEATHER_CHESTPLATE, String.format("%s&7 teams CHESTPLACE", team.getChatColor() + team.name())).setLeatherColor(team.getColor());
         Item HELMET = new Item(Material.LEATHER_HELMET, String.format("%s&7 teams HELMET", team.getChatColor() + team.name())).setLeatherColor(team.getColor());
-        return new ItemStack[]{BOOTS.spigot(), LEGGINGS.spigot(), CHESTPLACE.spigot(), HELMET.spigot()};
+        return new ItemStack[]{setUnbreakable(BOOTS.spigot()), setUnbreakable(LEGGINGS.spigot()), setUnbreakable(CHESTPLACE.spigot()), setUnbreakable(HELMET.spigot())};
     }
 
     public void setScoreboardLine(TeamColors team, int id) {
@@ -219,5 +221,13 @@ public class TeamManager {
 
     public HashMap<Player, TeamColors> getPlayers() {
         return players;
+    }
+
+    private static ItemStack setUnbreakable(ItemStack item) {
+        net.minecraft.server.v1_15_R1.ItemStack stack = CraftItemStack.asNMSCopy(item);
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setBoolean("Unbreakable", true);
+        stack.setTag(tag);
+        return CraftItemStack.asBukkitCopy(stack);
     }
 }

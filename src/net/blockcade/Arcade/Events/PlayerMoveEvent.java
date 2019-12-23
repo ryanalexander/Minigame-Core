@@ -44,6 +44,7 @@ import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Managers.GamePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityToggleSwimEvent;
 
 import java.util.Objects;
 import java.util.Random;
@@ -56,6 +57,12 @@ public class PlayerMoveEvent implements Listener {
 
     public PlayerMoveEvent(Game game) {
         this.game = game;
+    }
+
+    @EventHandler
+    public void SwimToggle(EntityToggleSwimEvent e){
+        if(!e.isSwimming())
+            e.setCancelled(true);
     }
 
     @EventHandler

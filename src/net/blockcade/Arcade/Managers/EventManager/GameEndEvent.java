@@ -31,11 +31,13 @@ import org.bukkit.event.HandlerList;
 
 public class GameEndEvent extends Event {
 
-    private HandlerList handlers;
+    private static HandlerList handlers;
 
     public GameEndEvent() {
         this.handlers = new HandlerList();
     }
+
+    public static HandlerList getHandlerList() {return handlers;}
 
     @Override
     public HandlerList getHandlers() {

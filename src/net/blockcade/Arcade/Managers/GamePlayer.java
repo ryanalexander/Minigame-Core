@@ -307,13 +307,15 @@ public class GamePlayer implements Listener {
     }
     @EventHandler
     public void PlayerDeath(PlayerDeathEvent event){
-        GamePlayer victom = GamePlayers.get((Player)event.getPlayer());
-        GamePlayer damager = GamePlayers.get((Player)event.getKiller());
-        victom.last_combat=0;
+        GamePlayer victom = GamePlayers.get(event.getPlayer());
+        victom.last_combat = 0;
         victom.setKillstreak(0);
         victom.addDeath();
-        damager.addKill();
-        damager.setKillstreak(damager.getKillstreak()+1);
+        if(event.getKiller() instanceof Player) {
+            GamePlayer damager = GamePlayers.get(event.getKiller());
+            damager.addKill();
+            damager.setKillstreak(damager.getKillstreak()+1);
+        }
     }
 
     public static GamePlayer getGamePlayer(Player player){

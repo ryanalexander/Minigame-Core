@@ -63,7 +63,7 @@ public class ScoreboardManager {
                     cancel();
                 }
             }
-        }.runTaskTimer(game.handler(),0L,10L);
+        }.runTaskTimer(game.handler(),0L,2L);
         sbs++;
     }
 
