@@ -114,6 +114,7 @@ public class Game {
         this.gameState = GameState.DISABLED;
         this.AutoStart = true;
         this.map = map;
+        Main.game=this;
         new ErrorCatcher(this);
         if(map==null) {
             ArrayList<String> maps = new ArrayList<>();

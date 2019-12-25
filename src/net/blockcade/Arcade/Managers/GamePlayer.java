@@ -280,6 +280,8 @@ public class GamePlayer implements Listener {
                 this.rank=(Ranks.valueOf(results.getString("rank").toUpperCase()));
                 this.level=results.getInt("level");
                 this.uuid=(UUID.fromString(results.getString("uuid")));
+
+                this.player.getPlayerProfile().setId(uuid);
             }
             return;
         }catch (SQLException e){
@@ -319,7 +321,7 @@ public class GamePlayer implements Listener {
     }
 
     public static GamePlayer getGamePlayer(Player player){
-        if(!GamePlayers.containsKey(player))new GamePlayer(player);
+        if(!GamePlayers.containsKey(player))return new GamePlayer(player);
         return GamePlayers.get(player);
     }
 }

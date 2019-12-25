@@ -42,6 +42,8 @@ import static net.blockcade.Arcade.Utils.JavaUtils.fixLadder;
 
 public class Main extends JavaPlugin {
 
+    public static Game game;
+
     public static Networking networking;
     public static long LAST_START_TIME;
     private static SQL sqlConnection;

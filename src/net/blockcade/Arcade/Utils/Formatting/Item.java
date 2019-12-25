@@ -123,6 +123,7 @@ public class Item implements Listener {
     }
 
     public ItemStack spigot() {
+        this.im.setUnbreakable(true);
         this.is.setItemMeta(this.im);
         return this.is;
     }

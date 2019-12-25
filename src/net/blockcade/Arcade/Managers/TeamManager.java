@@ -140,7 +140,7 @@ public class TeamManager {
         Item LEGGINGS = new Item(Material.LEATHER_LEGGINGS, String.format("%s&7 teams LEGGINGS", team.getChatColor() + team.name())).setLeatherColor(team.getColor());
         Item CHESTPLACE = new Item(Material.LEATHER_CHESTPLATE, String.format("%s&7 teams CHESTPLACE", team.getChatColor() + team.name())).setLeatherColor(team.getColor());
         Item HELMET = new Item(Material.LEATHER_HELMET, String.format("%s&7 teams HELMET", team.getChatColor() + team.name())).setLeatherColor(team.getColor());
-        return new ItemStack[]{setUnbreakable(BOOTS.spigot()), setUnbreakable(LEGGINGS.spigot()), setUnbreakable(CHESTPLACE.spigot()), setUnbreakable(HELMET.spigot())};
+        return new ItemStack[]{(BOOTS.spigot()), (LEGGINGS.spigot()), (CHESTPLACE.spigot()), (HELMET.spigot())};
     }
 
     public void setScoreboardLine(TeamColors team, int id) {
