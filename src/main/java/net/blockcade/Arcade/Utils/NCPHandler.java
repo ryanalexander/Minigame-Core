@@ -1,6 +1,7 @@
 package net.blockcade.Arcade.Utils;
 
 import me.rerere.matrix.api.MatrixAPI;
+import me.rerere.matrix.api.MatrixAPIProvider;
 import me.rerere.matrix.api.events.PlayerViolationEvent;
 import net.blockcade.Arcade.Main;
 import net.blockcade.Arcade.Utils.Formatting.Text;
@@ -49,7 +50,7 @@ public class NCPHandler implements Listener {
     public void IViolation(PlayerViolationEvent event){
         if(bans.contains(event.getPlayer()))return;
             VIOLATION v = VIOLATION.valueOf(event.getHackType().name().toUpperCase());
-            int violation_count = MatrixAPI.getViolations(event.getPlayer(),event.getHackType());
+            int violation_count = ((MatrixAPI)MatrixAPIProvider.getAPI()).getViolations(event.getPlayer(),event.getHackType());
             if(v!=null){
             if(violation_count>=v.getI()){
                 banPlayer(event.getPlayer(),event.getHackType().name()+"|"+violation_count+"|"+event.getMessage());

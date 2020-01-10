@@ -41,38 +41,32 @@
 package net.blockcade.Arcade.Utils.Formatting;
 
 import net.blockcade.Arcade.Utils.ReflectionUtil;
-import net.minecraft.server.v1_15_R1.IChatBaseComponent;
-import net.minecraft.server.v1_15_R1.PacketPlayOutPlayerListHeaderFooter;
-import net.minecraft.server.v1_15_R1.PlayerConnection;
-import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 public class TABList {
     public static void sendPlayerListTab(Player player, String header, String footer) {
         try {
-            CraftPlayer craftplayer = (CraftPlayer) player;
-            PlayerConnection connection = craftplayer.getHandle().playerConnection;
-            IChatBaseComponent head = IChatBaseComponent.ChatSerializer.a(ChatColor.translateAlternateColorCodes('&', "{\"text\": \"" + Text.format(header) + "\"}"));
-            IChatBaseComponent foot = IChatBaseComponent.ChatSerializer.a(ChatColor.translateAlternateColorCodes('&', "{\"text\": \"" + Text.format(footer) + "\"}"));
-            PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter();
-            Field headerField = packet.getClass().getDeclaredField("header");
-            headerField.setAccessible(true);
-            headerField.set(packet, head);
-            headerField.setAccessible(!headerField.isAccessible());
-            Field footerField = packet.getClass().getDeclaredField("footer");
-            footerField.setAccessible(true);
-            footerField.set(packet, foot);
-            footerField.setAccessible(!footerField.isAccessible());
+            Class<?> chatSerializer = ReflectionUtil.getNMSClass("ChatSerializer");
+            Class<?> chatComponent = ReflectionUtil.getNMSClass("IChatBaseComponent");
 
-            Method sendPacket = ReflectionUtil.getNMSClass("PlayerConnection").getMethod("sendPacket", ReflectionUtil.getNMSClass("Packet"));
-            sendPacket.invoke((PlayerConnection)ReflectionUtil.getConnection(player), packet);
-            connection.sendPacket(packet);
-        } catch (Exception var10) {
-            var10.printStackTrace();
+            Class<?> packetPlayerListHeaderFooter = ReflectionUtil.getNMSClass("PacketPlayOutPlayerListHeaderFooter");
+            Constructor<?> packetPlayerListHeaderFooterConstructor = packetPlayerListHeaderFooter.getDeclaredConstructor(chatComponent);
+
+            Object tabHeader = chatSerializer.getMethod("a", String.class).invoke(chatSerializer, "{\"text\": \"" + header + "\"}");
+            Object tabFooter = chatSerializer.getMethod("a", String.class).invoke(chatSerializer, "{\"text\": \"" +footer + "\"}");
+
+            Object headerPacket = packetPlayerListHeaderFooterConstructor.newInstance(tabHeader);
+
+            Field field = headerPacket.getClass().getDeclaredField("b");
+            field.setAccessible(true);
+            field.set(headerPacket, tabFooter);
+
+            ReflectionUtil.sendPacket(player,null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

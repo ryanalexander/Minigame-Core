@@ -281,7 +281,7 @@ public class GamePlayer implements Listener {
                 this.level=results.getInt("level");
                 this.uuid=(UUID.fromString(results.getString("uuid")));
 
-                this.player.getPlayerProfile().setId(uuid);
+                // TODO Hook into Spigot and override player UUID
             }
             return;
         }catch (SQLException e){

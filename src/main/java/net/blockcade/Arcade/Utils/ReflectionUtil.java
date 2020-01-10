@@ -451,11 +451,30 @@ public class ReflectionUtil {
         } catch (IllegalAccessException ignored) {}
     }
 
+    /**
+     *
+     * @param player
+     * @return
+     */
     public static Object getConnection(Player player) throws SecurityException, NoSuchMethodException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         Method getHandle = player.getClass().getMethod("getHandle");
         Object nmsPlayer = getHandle.invoke(player);
         Field conField = nmsPlayer.getClass().getField("playerConnection");
         Object con = conField.get(nmsPlayer);
         return con;
+    }
+
+    /**
+     *
+     * @param p Player object in which the packet will be send
+     * @param packet Reflection packet object
+     */
+    public static void sendPacket(Player p, Object packet) {
+        try {
+            Object connection = getConnection(p);
+            connection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(connection, packet);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

@@ -31,13 +31,12 @@ import net.blockcade.Arcade.Utils.Formatting.Item;
 import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.Lang.lang;
 import net.blockcade.Arcade.Varables.TeamColors;
-import net.minecraft.server.v1_15_R1.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -224,10 +223,10 @@ public class TeamManager {
     }
 
     private static ItemStack setUnbreakable(ItemStack item) {
-        net.minecraft.server.v1_15_R1.ItemStack stack = CraftItemStack.asNMSCopy(item);
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setBoolean("Unbreakable", true);
-        stack.setTag(tag);
-        return CraftItemStack.asBukkitCopy(stack);
+        ItemMeta im = item.getItemMeta();
+        assert im != null;
+        im.setUnbreakable(true);
+        item.setItemMeta(im);
+        return item;
     }
 }

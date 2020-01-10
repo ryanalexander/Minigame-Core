@@ -45,8 +45,10 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 import static net.blockcade.Arcade.Varables.GameModule.*;
 
@@ -91,16 +93,8 @@ public class blockPlace implements Listener {
 
             if (e.getBlock().getType() == Material.TNT) {
                 e.getBlock().setType(Material.AIR);
-                TNTPrimed tnt = (TNTPrimed) e.getBlock().getLocation().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
-                tnt.setVelocity(null);
-                EntityTNTPrimed nmsTNT = ((CraftTNTPrimed) tnt).getHandle();
-                try {
-                    Field sourceField = EntityTNTPrimed.class.getDeclaredField("source");
-                    sourceField.setAccessible(true);
-                    sourceField.set(nmsTNT, ((CraftLivingEntity) e.getPlayer()).getHandle());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                TNTPrimed tnt = (TNTPrimed) Objects.requireNonNull(e.getBlock().getLocation().getWorld()).spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
+                tnt.setVelocity(new Vector(0,0,0));
                 tnt.setFuseTicks(43);
             }
         }
