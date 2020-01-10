@@ -20,7 +20,7 @@ import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.GameType;
 import net.blockcade.Arcade.Varables.Ranks;
-import net.minecraft.server.v1_15_R1.MinecraftServer;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -46,7 +46,6 @@ public class debug implements CommandExecutor {
         UUID server_uuid = Main.networking.getUuid();
         String container = Main.networking.getContainer();
         String serverName = Main.networking.serverName;
-        int TPS = MinecraftServer.TPS;
         long UPTIME = ((System.currentTimeMillis()-Main.LAST_START_TIME)/1000);
 
         // Player Data
@@ -81,7 +80,6 @@ public class debug implements CommandExecutor {
         sender.sendMessage(Text.format("&fUUID: &e"+server_uuid));
         sender.sendMessage(Text.format("&fSERVERNAME: &e"+serverName));
         sender.sendMessage(Text.format("&fCONTAINER: &e"+container));
-        sender.sendMessage(Text.format("&fTPS: &e"+TPS));
         sender.sendMessage(Text.format("&fUPTIME: &e"+UPTIME+"s"));
         if(gamePlayer!=null) {
             sender.sendMessage(Text.format("&f-----&e[PLAYER]&f-----"));
