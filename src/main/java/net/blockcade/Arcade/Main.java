@@ -61,7 +61,7 @@ public class Main extends JavaPlugin {
         getCommand("debug").setExecutor(new debug(null));
 
         for(Player player : Bukkit.getOnlinePlayers()){
-            new PlayerJoinEvent(player, null).callEvent();
+            Bukkit.getPluginManager().callEvent(new PlayerJoinEvent(player,null));
         }
 
         // Fix Box Bounding

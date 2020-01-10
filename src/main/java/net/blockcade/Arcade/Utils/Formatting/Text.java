@@ -26,12 +26,10 @@
 
 package net.blockcade.Arcade.Utils.Formatting;
 
-import net.minecraft.server.v1_15_R1.ChatMessageType;
-import net.minecraft.server.v1_15_R1.IChatBaseComponent;
-import net.minecraft.server.v1_15_R1.PacketPlayOutChat;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.Formatter;
@@ -86,7 +84,7 @@ public class Text {
             case DRAGON_BAR:
                 return true;
             case ACTION_BAR:
-                ((CraftPlayer) p).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + msg + "\"}"), ChatMessageType.GAME_INFO));
+                p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
                 return true;
         }
         return false;
