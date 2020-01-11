@@ -139,7 +139,6 @@ public class Item implements Listener {
         for (Map.Entry<Item, click> is : actions.entrySet()) {
             if (is.getKey().spigot().equals(e.getItem())) {
                 e.setCancelled(true);
-                //if(!player_delays.containsKey((Player)e.getPlayer())||(System.currentTimeMillis()-player_delays.get((Player)e.getPlayer()))>250){player_delays.put((Player)e.getPlayer(),System.currentTimeMillis());}else{e.setCancelled(true);return;}
                 if (is.getValue() != null)
                     is.getValue().run(e.getPlayer());
                 return;
@@ -168,7 +167,6 @@ public class Item implements Listener {
         for (Map.Entry<Item, click> is : actions.entrySet()) {
             if (is.getKey().spigot().equals(e.getCurrentItem())) {
                 e.setCancelled(true);
-                if(!player_delays.containsKey((Player)e.getWhoClicked())||(System.currentTimeMillis()-player_delays.get((Player)e.getWhoClicked()))>250){player_delays.put((Player)e.getWhoClicked(),System.currentTimeMillis());}else{e.setCancelled(true);return;}
                 if (is.getValue() != null)
                     is.getValue().run((Player) e.getWhoClicked());
                 return;

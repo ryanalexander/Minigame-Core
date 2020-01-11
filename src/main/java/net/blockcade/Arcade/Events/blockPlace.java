@@ -140,9 +140,11 @@ public class blockPlace implements Listener {
             if (game.BlockManager().canBreakBlock(b.getLocation())) {
                 game.BlockManager().update(b.getLocation(), b.getType(), b.getBlockData());
                 b.setType(Material.AIR);
-                b.getLocation().getWorld().spawnParticle(Particle.BLOCK_DUST,b.getLocation(),2);
+                Objects.requireNonNull(b.getLocation().getWorld()).spawnParticle(Particle.BLOCK_CRACK,b.getLocation(),4);
             }
         }
+        // Don't remove blocks
+        e.blockList().clear();
     }
 
 
