@@ -126,8 +126,9 @@ public class Game {
                 this.map=Bukkit.getWorld(maps.get((new Random()).nextInt(maps.size())));
             }
         }
+        Main.networking=new Networking(handler,this);
+        Main.networking.init();
 
-        Main.networking.setGame(title());
         // Remove entities
         for (Entity e : map.getEntities()) {
             if (e.getType() != PLAYER&&e.getType()!= EntityType.ITEM_FRAME) {

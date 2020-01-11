@@ -26,7 +26,13 @@
 
 package net.blockcade.Arcade;
 
+import net.blockcade.Arcade.Managers.GamePlayer;
+import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Utils.JedisUtils;
+import net.blockcade.Arcade.Varables.GameState;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -47,19 +53,24 @@ public class Networking {
     private String container="";
 
     private String gameState = "DISABLED";
+    private Game game_obj;
     private String game = "";
 
-    private Main plugin;
+    private JavaPlugin plugin;
     private static JedisPool pool;
 
-    public Networking(Main plugin) {
+    public Networking(JavaPlugin plugin, Game game) {
         this.plugin = plugin;
+        this.game_obj = game;
     }
 
     public void init() {
         if (pool == null) {
             pool = JedisUtils.init();
         }
+
+        this.game=game_obj.getGameName().getName();
+        this.gameState=game_obj.GameState().name();
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader("/etc/hostname"));
@@ -94,7 +105,7 @@ public class Networking {
             public void run() {
                 pushData();
             }
-        }.runTaskTimer(plugin, 0L, (20 * 5));
+        }.runTaskTimer(plugin, 0L, 20L);
     }
 
     public String getContainer() {
@@ -115,6 +126,9 @@ public class Networking {
 
     public void setGameState(String gameState) {
         this.gameState = gameState;
+        try (Jedis jedis = pool.getResource()) {
+            jedis.set(String.format("SERVER|%s|state", uuid), gameState);
+        }
     }
 
     public void setGame(String game) {
@@ -129,10 +143,37 @@ public class Networking {
             jedis.set(String.format("SERVER|%s|type", uuid), plugin.getConfig().getString("server-type"));
             jedis.set(String.format("SERVER|%s|playercount", uuid), getServer().getOnlinePlayers().size() + "");
             jedis.set(String.format("SERVER|%s|game", uuid), this.game);
-            jedis.set(String.format("SERVER|%s|state", uuid), this.gameState);
             jedis.set(String.format("SERVER|%s|last_poll", uuid), Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() + "");
-
             jedis.set(String.format("SERVER|%s|container", uuid), container);
+            doStateCheck(jedis);
+        }
+    }
+
+    private void doStateCheck(Jedis jedis){
+        String state = jedis.get(String.format("SERVER|%s|state", uuid));
+        if(state==null){
+            jedis.set(String.format("SERVER|%s|state", uuid), gameState);
+        }else {
+            if(!state.equals(gameState)){
+                switch (GameState.valueOf(state)){
+                    case IN_GAME:
+                        game_obj.init();
+                        break;
+                    case DISABLED:
+                        game_obj.stop(false,false);
+                        for(Player player : Bukkit.getOnlinePlayers()){
+                            if(GamePlayer.getGamePlayer(player).getRank().getLevel()<50)
+                                player.kickPlayer(Text.format("&cThis game has been disabled by an Administrator."));
+                        }
+                        break;
+                    case STARTING:
+                        game_obj.start();
+                        break;
+                    default:
+                        jedis.set(String.format("SERVER|%s|state", uuid), gameState);
+                        break;
+                }
+            }
         }
     }
 }

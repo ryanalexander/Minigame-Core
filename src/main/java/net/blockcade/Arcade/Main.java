@@ -52,8 +52,6 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         LAST_START_TIME=System.currentTimeMillis();
         sqlConnection=new SQL(getConfig().getString("sql.host"),3306,getConfig().getString("sql.user"),getConfig().getString("sql.pass"),getConfig().getString("sql.database"));
-        networking = new Networking(this);
-        networking.init();
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new Item(), this);
         pm.registerEvents(new NCPHandler(), this);
