@@ -32,6 +32,7 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -139,8 +140,11 @@ public class Item implements Listener {
         for (Map.Entry<Item, click> is : actions.entrySet()) {
             if (is.getKey().spigot().equals(e.getItem())) {
                 e.setCancelled(true);
-                if (is.getValue() != null)
+                if (is.getValue() != null) {
                     is.getValue().run(e.getPlayer());
+                    e.setUseInteractedBlock(Event.Result.DENY);
+                    e.setUseItemInHand(Event.Result.DENY);
+                }
                 return;
             }
         }
