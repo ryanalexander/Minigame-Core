@@ -145,7 +145,6 @@ public class Game {
         // Game registration finished. Now inform all other plugins that game has Registered
         Bukkit.getPluginManager().callEvent(new GameRegisterEvent(this));
 
-
     }
 
     /**

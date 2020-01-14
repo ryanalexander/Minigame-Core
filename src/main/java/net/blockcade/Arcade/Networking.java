@@ -69,7 +69,7 @@ public class Networking {
             pool = JedisUtils.init();
         }
 
-        this.game=game_obj.getGameName().getName();
+        this.game=game_obj.title();
         this.gameState=game_obj.GameState().name();
 
         try {

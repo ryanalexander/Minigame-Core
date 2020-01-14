@@ -90,7 +90,6 @@ public class BlockManager {
     }
 
     public void doRollback() {
-        Bukkit.broadcastMessage("Starting rollback");
         for (Map.Entry<Location, Material> entry : changes.entrySet()) {
             entry.getKey().getBlock().setType(entry.getValue());
             if (changes_data.containsKey(entry.getKey()) && changes_data.get(entry.getKey()) != null)

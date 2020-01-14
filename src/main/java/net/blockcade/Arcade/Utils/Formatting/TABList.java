@@ -49,11 +49,10 @@ import java.lang.reflect.Field;
 public class TABList {
     public static void sendPlayerListTab(Player player, String header, String footer) {
         try {
-            Class<?> chatSerializer = ReflectionUtil.getNMSClass("ChatSerializer");
-            Class<?> chatComponent = ReflectionUtil.getNMSClass("IChatBaseComponent");
+            Class<?> chatSerializer = ReflectionUtil.getNMSClass("IChatBaseComponent$ChatSerializer");
 
             Class<?> packetPlayerListHeaderFooter = ReflectionUtil.getNMSClass("PacketPlayOutPlayerListHeaderFooter");
-            Constructor<?> packetPlayerListHeaderFooterConstructor = packetPlayerListHeaderFooter.getDeclaredConstructor(chatComponent);
+            Constructor<?> packetPlayerListHeaderFooterConstructor = packetPlayerListHeaderFooter.getDeclaredConstructor();
 
             Object tabHeader = chatSerializer.getMethod("a", String.class).invoke(chatSerializer, "{\"text\": \"" + header + "\"}");
             Object tabFooter = chatSerializer.getMethod("a", String.class).invoke(chatSerializer, "{\"text\": \"" +footer + "\"}");
