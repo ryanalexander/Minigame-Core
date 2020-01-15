@@ -229,7 +229,7 @@ public class GamePlayer implements Listener {
 
     public boolean hasStatistic(GameName game){
         try {
-            ResultSet r = Main.getSqlConnection().query(String.format("SELECT `id` FROM `player_statistics` WHERE `player_uuid`='%s' AND `game_enum`='%s' LIMIT 1;", player.getUniqueId(), game.name()));
+            ResultSet r = Main.getSqlConnection().query(String.format("SELECT * FROM `player_statistics` WHERE `player_uuid`='%s' AND `game_enum`='%s' LIMIT 1;", player.getUniqueId(), game.name()));
             if(r==null||r.getFetchSize()<1){return false;}
             try {
                 r.first();

@@ -63,7 +63,7 @@ public class TABList {
             field.setAccessible(true);
             field.set(headerPacket, tabFooter);
 
-            ReflectionUtil.sendPacket(player,null);
+            ReflectionUtil.sendPacket(player,headerPacket);
         } catch (Exception e) {
             e.printStackTrace();
         }
