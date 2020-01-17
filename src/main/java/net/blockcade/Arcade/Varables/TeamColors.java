@@ -27,6 +27,7 @@
 package net.blockcade.Arcade.Varables;
 
 import org.bukkit.Color;
+import org.bukkit.Material;
 
 public enum TeamColors {
     RED("&c", Color.RED, "RED"),
@@ -54,6 +55,10 @@ public enum TeamColors {
     }
 
     public String formatted() { return this.chatColor+this.name();}
+
+    public Material getWoolBlock() {
+        return Material.valueOf(translation+"_"+"WOOL");
+    }
 
     TeamColors(String chatColor, Color Color, String translation) {
         this.color = Color;

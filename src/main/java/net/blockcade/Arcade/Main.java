@@ -54,7 +54,7 @@ public class Main extends JavaPlugin {
         sqlConnection=new SQL(getConfig().getString("sql.host"),3306,getConfig().getString("sql.user"),getConfig().getString("sql.pass"),getConfig().getString("sql.database"));
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new Item(), this);
-        pm.registerEvents(new NCPHandler(), this);
+        //pm.registerEvents(new NCPHandler(), this);
         getCommand("mct").setExecutor(new mct(this));
         getCommand("debug").setExecutor(new debug(null));
 

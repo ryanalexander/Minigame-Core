@@ -45,6 +45,7 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
@@ -74,6 +75,8 @@ public class blockPlace implements Listener {
     public void blockPlace(BlockPlaceEvent e) {
         if(!game.hasModule(BLOCK_PLACEMENT)){e.setCancelled(true);return;}
         if(!game.hasModule(BLOCK_ROLLBACK))return;
+        if(game.hasModule(INFINITE_BUILDING))
+            e.getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getType()));
         if (game.BlockManager().blocklog.contains(e.getBlock().getLocation())) {
             return;
         }

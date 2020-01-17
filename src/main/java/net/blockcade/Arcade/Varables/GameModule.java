@@ -38,6 +38,8 @@ public enum GameModule {
      * CHAT_MANAGER - Will the plugin format chat (If disabled, you alternative will need to follow guidelines, check with superior
      *
      * ERROR_CATCHER - This will watch the game and ensure that all progression markers are met as expected. If a major stage fails all players will be returned to the lobby.
+     *
+     * INFINITE_BUILDING - Enable infinite building
      */
     START_MECHANISM,
     CHEST_BLOCK,
@@ -57,5 +59,6 @@ public enum GameModule {
     @Deprecated
     BOUNTIES,
     NO_WEATHER_CHANGE,
-    ERROR_CATCHER
+    ERROR_CATCHER,
+    INFINITE_BUILDING
 }

@@ -51,8 +51,8 @@ public class EntityManager {
         return gameEntities.contains(e);
     }
 
-    public boolean AddGameEntity(Entity e) {
-        return gameEntities.contains(e);
+    public void AddGameEntity(Entity e) {
+        gameEntities.add(e);
     }
 
     public Entity CreateEntity(Entity e) {
