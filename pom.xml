@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~
+  ~ *
+  ~ * © Stelch Software 2020, distribution is strictly prohibited
+  ~ * Blockcade is a company of Stelch Software
+  ~ *
+  ~ * Changes to this file must be documented on push.
+  ~ * Unauthorised changes to this file are prohibited.
+  ~ *
+  ~ * @author Ryan W
+  ~ @since (DD/MM/YYYY) 18/1/2020 */
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
