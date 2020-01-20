@@ -64,11 +64,11 @@ public class blockPlace implements Listener {
         if(!game.hasModule(BLOCK_PLACEMENT)){e.setCancelled(true);return;}
         if(!game.hasModule(BLOCK_ROLLBACK))return;
         if(game.hasModule(INFINITE_BUILDING))
-            e.getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getType()));
-        if (game.BlockManager().blocklog.contains(e.getBlock().getLocation())) {
+            e.getPlayer().getInventory().getItemInMainHand().setAmount(e.getPlayer().getInventory().getItemInMainHand().getAmount()+1);
+        if (game.BlockManager().blocklog.contains(e.getBlock().getLocation()))
             return;
-        }
-        if (e.isCancelled()) return;
+        if (e.isCancelled())
+            return;
         if (Spectator.isSpectator(e.getPlayer())) {
             e.setCancelled(true);
             return;
@@ -84,7 +84,7 @@ public class blockPlace implements Listener {
 
             if (e.getBlock().getType() == Material.TNT) {
                 e.getBlock().setType(Material.AIR);
-                TNTPrimed tnt = (TNTPrimed) Objects.requireNonNull(e.getBlock().getLocation().getWorld()).spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
+                TNTPrimed tnt = (TNTPrimed) Objects.requireNonNull(e.getBlock().getLocation().getWorld()).spawnEntity(e.getBlock().getLocation().add(0,1,0), EntityType.PRIMED_TNT);
                 tnt.setVelocity(new Vector(0,0,0));
                 tnt.setFuseTicks(43);
             }
@@ -124,8 +124,6 @@ public class blockPlace implements Listener {
     @EventHandler
     public void tntExplode(EntityExplodeEvent e) {
         //if(!game.hasModule(BLOCK_ROLLBACK))return;
-        if (e.getEntity() instanceof Fireball)
-            ((Fireball) e.getEntity()).setIsIncendiary(false);
         e.setCancelled(true);
         for (Block b : e.blockList()) {
             if (game.BlockManager().canBreakBlock(b.getLocation())) {
@@ -134,8 +132,6 @@ public class blockPlace implements Listener {
                 Objects.requireNonNull(b.getLocation().getWorld()).spawnParticle(Particle.BLOCK_CRACK,b.getLocation(),4);
             }
         }
-        // Don't remove blocks
-        e.blockList().clear();
     }
 
 

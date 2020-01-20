@@ -373,6 +373,15 @@ public class Game {
     }
 
     public ArrayList<GameModule> getModules() {return this.gameModules;}
+    public String getModulesString() {
+        String s = "";
+        int i = 0;
+        for(GameModule module : this.gameModules){
+            i++;
+            s+=(i!=0?"&f, &e":"")+module;
+        }
+        return s;
+    }
 
     public void setModule(GameModule module, boolean state){
         if(state){

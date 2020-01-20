@@ -99,7 +99,7 @@ public class debug implements CommandExecutor {
         sender.sendMessage(Text.format("&fDAMAGEHEIGHT: &e"+Damage_height));
         sender.sendMessage(Text.format("&fGAMEENTITIES: &e"+GameEntities));
         sender.sendMessage(Text.format("&fFUNCTIONENTITIES: &e"+FunctionEntities));
-        sender.sendMessage(Text.format("&fMANAGEDBLOCKS: &e"+ManagedBlocks));
+        sender.sendMessage(Text.format("&fMODULES: ("+ManagedBlocks+"): "+game.getModulesString()));
         sender.sendMessage(Text.format("&e&n______________________"));
 
 

@@ -122,6 +122,7 @@ public class playerJoin implements Listener {
             case IN_GAME:
                 if (game.TeamManager().hasTeam(e.getPlayer())||game.hasModule(GameModule.ALLSTATE_JOIN)) {
                     e.getPlayer().setHealth(20);
+                    e.getPlayer().setHealth(0);
                 } else {
                     Spectator.makeSpectator(e.getPlayer(), game);
                 }
