@@ -23,27 +23,21 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BlockManager {
     private Game game;
 
-    public BlockManager(Game game) {
-        this.game = game;
-    }
-
-
     public ArrayList<Location> blocklog = new ArrayList<>();
+    private List<Location> no_place = new ArrayList<>();
     private HashMap<Location, Material> changes = new HashMap<>();
     private HashMap<Location, BlockData> changes_data = new HashMap<>();
 
     /**
      * Block Handler
      */
-    public BlockManager() {
+    public BlockManager(Game game) {
+        this.game = game;
     }
 
     /**
@@ -53,6 +47,19 @@ public class BlockManager {
      */
     public boolean canBreakBlock(Location loc) {
         return this.changes.containsKey(loc) || this.changes_data.containsKey(loc);
+    }
+
+    /**
+     * Load specific Blocked Region
+     */
+    public void loadBlockedRegion() {
+        String location = String.format("maps.%s.BLOCKREGION", "world");
+        List<?> BlockRegion = (List<?>) Objects.requireNonNull(game.handler().getConfig().get(location));
+        System.out.printf("Location %s count %s",location,BlockRegion!=null?BlockRegion.size():-1);
+        for(Object l : BlockRegion) {
+            if(l==null)continue;
+            no_place.add((Location)l);
+        }
     }
 
     /**
@@ -67,14 +74,13 @@ public class BlockManager {
     }
 
     public boolean canPlaceBlock(Player player, Location location) {
-        boolean canplace = true;
-        if (game.GameState() != GameState.IN_GAME) {
+        if (game.GameState() != GameState.IN_GAME)
             return false;
-        }
-        if (game.handler().getConfig().getInt(String.format("maps.%s.block-height", game.map().getName())) <= location.getY()) {
+        if (game.handler().getConfig().getInt(String.format("maps.%s.block-height", game.map().getName())) <= location.getY())
             return false;
-        }
-        return canplace;
+        if(no_place.indexOf(location)>-1)
+            return false;
+        return true;
     }
 
     public void doRollback() {
@@ -87,6 +93,10 @@ public class BlockManager {
 
     public static boolean inRegion(Block block, Location location1, Location location2) {
         return blocksFromTwoPoints(location1, location2).contains(block);
+    }
+
+    public List<Location> getNoPlace(){
+        return no_place;
     }
 
     private static List<Block> blocksFromTwoPoints(Location loc1, Location loc2) {

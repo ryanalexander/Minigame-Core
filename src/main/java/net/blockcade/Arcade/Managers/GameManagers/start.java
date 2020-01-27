@@ -62,7 +62,7 @@ public class start {
                 for (int i = 0; i < time; i++) {
                     basestr += ((i < counter) ? "&a" : "&c") + "&l&m=";
                 }
-                Text.sendAll(Text.format("&eStarting in " + basestr + "&r &e" + counter + " second" + ((counter > 1) ? "s" : "")), Text.MessageType.ACTION_BAR);
+                Text.sendAll(Text.format(basestr), Text.MessageType.ACTION_BAR);
                 if (counter == 10 || counter < 6) {
                     Text.sendAll(String.format(lang.GAME_BEGIN_IN.get(), counter), Text.MessageType.TEXT_CHAT);
                     for (Player player : Bukkit.getOnlinePlayers()) {

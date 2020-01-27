@@ -32,6 +32,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -64,7 +65,7 @@ public class blockPlace implements Listener {
         if(!game.hasModule(BLOCK_PLACEMENT)){e.setCancelled(true);return;}
         if(!game.hasModule(BLOCK_ROLLBACK))return;
         if(game.hasModule(INFINITE_BUILDING))
-            e.getPlayer().getInventory().getItemInMainHand().setAmount(e.getPlayer().getInventory().getItemInMainHand().getAmount()+1);
+            e.getPlayer().getInventory().getItemInMainHand().setAmount(e.getPlayer().getInventory().getItemInMainHand().getAmount());
         if (game.BlockManager().blocklog.contains(e.getBlock().getLocation()))
             return;
         if (e.isCancelled())
@@ -84,7 +85,7 @@ public class blockPlace implements Listener {
 
             if (e.getBlock().getType() == Material.TNT) {
                 e.getBlock().setType(Material.AIR);
-                TNTPrimed tnt = (TNTPrimed) Objects.requireNonNull(e.getBlock().getLocation().getWorld()).spawnEntity(e.getBlock().getLocation().add(0,1,0), EntityType.PRIMED_TNT);
+                TNTPrimed tnt = (TNTPrimed) Objects.requireNonNull(e.getBlock().getLocation().getWorld()).spawnEntity(e.getBlock().getLocation().add(0,0.5,0), EntityType.PRIMED_TNT);
                 tnt.setVelocity(new Vector(0,0,0));
                 tnt.setFuseTicks(43);
             }
@@ -124,7 +125,7 @@ public class blockPlace implements Listener {
     @EventHandler
     public void tntExplode(EntityExplodeEvent e) {
         //if(!game.hasModule(BLOCK_ROLLBACK))return;
-        e.setCancelled(true);
+        if(e.getEntity().getType().equals(EntityType.PRIMED_TNT))e.setYield(0f);
         for (Block b : e.blockList()) {
             if (game.BlockManager().canBreakBlock(b.getLocation())) {
                 game.BlockManager().update(b.getLocation(), b.getType(), b.getBlockData());
@@ -132,8 +133,8 @@ public class blockPlace implements Listener {
                 Objects.requireNonNull(b.getLocation().getWorld()).spawnParticle(Particle.BLOCK_CRACK,b.getLocation(),4);
             }
         }
+        e.blockList().clear();
     }
-
 
     private static String capitalizeFirstLetter(String original) {
         if (original == null || original.length() == 0) {

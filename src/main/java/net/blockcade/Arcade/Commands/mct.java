@@ -18,13 +18,17 @@ import net.blockcade.Arcade.Managers.GamePlayer;
 import net.blockcade.Arcade.Utils.GameUtils.MCTInstance;
 import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.Ranks;
+import org.bukkit.BlockChangeDelegate;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class mct implements CommandExecutor {
@@ -83,6 +87,23 @@ public class mct implements CommandExecutor {
                 list.add(String.format("%s:%s:%s:%s", loc.getWorld().getName(), Double.parseDouble("" + loc.getX()), Double.parseDouble("" + loc.getY()), Double.parseDouble("" + loc.getZ())));
                 plugin.getConfig().set(key, list);
                 sender.sendMessage(Text.format(String.format("&aMCT> &7Saved &e%s&7 location at x:&e%s&7 y:&e%s&7 z:&e%s&7 key: &e%s", args[1].toUpperCase(), Double.parseDouble("" + loc.getX()), Double.parseDouble("" + loc.getY()), Double.parseDouble("" + loc.getZ()), key)));
+                plugin.saveConfig();
+                break;
+            case "blockregion":
+                String key_blockregion = String.format("maps.%s.%s", ((Player) sender).getLocation().getWorld().getName(), args[1].toUpperCase());
+                Location location = ((Player)sender).getLocation();
+                Material block = Material.valueOf(args[2].toUpperCase());
+                List<Location> locations = new ArrayList<>();
+                int radius = Integer.parseInt(args[3]);
+                List<Block> blocks = new ArrayList<>();
+                for(int x = location.getBlockX() - radius; x <= location.getBlockX() + radius; x++)
+                    for(int y = location.getBlockY() - radius; y <= location.getBlockY() + radius; y++)
+                        for(int z = location.getBlockZ() - radius; z <= location.getBlockZ() + radius; z++)
+                            blocks.add(location.getWorld().getBlockAt(x, y, z));
+                for(Block b : blocks)
+                    if(b.getType().equals(block))
+                        locations.add(b.getLocation());
+                plugin.getConfig().set(key_blockregion,locations);
                 plugin.saveConfig();
                 break;
             case "list":

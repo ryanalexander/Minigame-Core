@@ -241,25 +241,19 @@ public class GamePlayer implements Listener {
     public void teleport(Location location){this.player.teleport(location);}
 
     public boolean hasStatistic(GameName game){
+        ResultSet r = Main.getSqlConnection().query(String.format("SELECT * FROM `player_statistics` WHERE `player_uuid`='%s' AND `game_enum`='%s' LIMIT 1;", player.getUniqueId(), game.name()));
         try {
-            ResultSet r = Main.getSqlConnection().query(String.format("SELECT * FROM `player_statistics` WHERE `player_uuid`='%s' AND `game_enum`='%s' LIMIT 1;", player.getUniqueId(), game.name()));
-            if(r==null||r.getFetchSize()<1){return false;}
-            try {
-                r.first();
-                CORE_wins = r.getInt("wins");
-                CORE_losses = r.getInt("losses");
-                CORE_kills = r.getInt("kills");
-                CORE_final_kills = r.getInt("final_kills");
-                CORE_deaths = r.getInt("deaths");
-            }catch (Exception e){
-                e.printStackTrace();
-                System.out.println("Failed to cache statistic for "+player.getUniqueId());
-            }
-            return true;
-        }catch (SQLException e){
+            r.first();
+            CORE_wins = r.getInt("wins");
+            CORE_losses = r.getInt("losses");
+            CORE_kills = r.getInt("kills");
+            CORE_final_kills = r.getInt("final_kills");
+            CORE_deaths = r.getInt("deaths");
+        }catch (Exception e){
             e.printStackTrace();
-            return false;
+            System.out.println("Failed to cache statistic for "+player.getUniqueId());
         }
+        return true;
     }
 
     @EventHandler
@@ -284,7 +278,6 @@ public class GamePlayer implements Listener {
     }
 
     private void BuildPlayer() {
-        FileConfiguration config = Main.getPlugin(Main.class).getConfig();
         String query=String.format("SELECT * FROM `players` WHERE `username`='%s' LIMIT 1;",this.getPlayer().getName());
         ResultSet results = Main.getSqlConnection().query(query);
         try {

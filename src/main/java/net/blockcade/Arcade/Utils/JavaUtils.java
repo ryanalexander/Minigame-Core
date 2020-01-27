@@ -43,6 +43,14 @@ public class JavaUtils {
         TimeUnit(String translated, int division){
             this.translated=translated;this.division=division;
         }
+
+        public int getDivision() {
+            return division;
+        }
+
+        public String getTranslated() {
+            return translated;
+        }
     }
 
     public static String center(String str, int size) {

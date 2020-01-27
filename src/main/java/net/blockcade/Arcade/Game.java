@@ -30,6 +30,7 @@ import net.blockcade.Arcade.Varables.GameName;
 import net.blockcade.Arcade.Varables.GameState;
 import net.blockcade.Arcade.Varables.GameType;
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -109,12 +110,13 @@ public class Game {
         this.max_players = max_players;
         this.handler = handler;
         this.gameModules = new ArrayList<>();
-        this.entityManager = new EntityManager(this);
-        this.teamManager = new TeamManager(this);
-        this.blockManager = new BlockManager(this);
         this.gameState = GameState.DISABLED;
         this.AutoStart = true;
         this.map = map;
+        this.entityManager = new EntityManager(this);
+        this.teamManager = new TeamManager(this);
+        this.blockManager = new BlockManager(this);
+        map.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS,false);
         Main.game=this;
         new ErrorCatcher(this);
         if(map==null) {

@@ -16,6 +16,7 @@ package net.blockcade.Arcade.Commands;
 
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Main;
+import net.blockcade.Arcade.Managers.BlockManager;
 import net.blockcade.Arcade.Managers.GamePlayer;
 import net.blockcade.Arcade.Utils.Formatting.Text;
 import net.blockcade.Arcade.Varables.GameState;
@@ -99,6 +100,7 @@ public class debug implements CommandExecutor {
         sender.sendMessage(Text.format("&fDAMAGEHEIGHT: &e"+Damage_height));
         sender.sendMessage(Text.format("&fGAMEENTITIES: &e"+GameEntities));
         sender.sendMessage(Text.format("&fFUNCTIONENTITIES: &e"+FunctionEntities));
+        sender.sendMessage(Text.format("&fBLOCK_BLOCKS: &e"+ game.BlockManager().getNoPlace().size()));
         sender.sendMessage(Text.format("&fMODULES: ("+ManagedBlocks+"): "+game.getModulesString()));
         sender.sendMessage(Text.format("&e&n______________________"));
 
