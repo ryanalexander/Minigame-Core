@@ -3,7 +3,7 @@ version: ${project.version}
 description: Blockcade Arcade Core
 api-version: 1.13
 main: net.blockcade.Arcade.Main
-load: STARTUP
+load: POSTWORLD
 commands:
   mct:
     description: Map Creator Tools

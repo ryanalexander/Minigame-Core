@@ -28,6 +28,8 @@ public enum GameModule {
      *
      * DEATH_MANAGER - Respawn players to their team spawn (Static spawns are not possible, will need to be integrated in your game)
      *
+     * ACHIEVEMENTS - Use custom Achievements, this includes Network-wide.
+     *
      * NO_TOOL_DROP - Prevent players dropping Swords, Axes, Pickaxes and Shovels
      *
      * BLOCK_PLACEMENT - Allow players to place/break blocks
@@ -57,6 +59,7 @@ public enum GameModule {
     START_MECHANISM,
     CHEST_BLOCK,
     DEATH_MANAGER,
+    ACHIEVEMENTS,
     NO_TOOL_DROP,
     BLOCK_PLACEMENT,
     BLOCK_ROLLBACK,

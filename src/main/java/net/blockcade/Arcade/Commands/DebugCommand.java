@@ -30,12 +30,10 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public class debug implements CommandExecutor {
-
-    // TODO Remove this entire file
+public class DebugCommand implements CommandExecutor {
 
     Game game;
-    public debug(Game game){this.game=game;}
+    public DebugCommand(Game game){this.game=game;}
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String arg, String[] args) {

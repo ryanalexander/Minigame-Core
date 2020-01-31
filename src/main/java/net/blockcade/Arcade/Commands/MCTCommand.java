@@ -31,11 +31,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.List;
 
-public class mct implements CommandExecutor {
+public class MCTCommand implements CommandExecutor {
 
     JavaPlugin plugin;
 
-    public mct(JavaPlugin main) {
+    public MCTCommand(JavaPlugin main) {
         plugin = main;
     }
 

@@ -15,6 +15,7 @@
 package net.blockcade.Arcade;
 
 import net.blockcade.Arcade.Events.*;
+import net.blockcade.Arcade.Managers.AdvancementManager.AchievementManager;
 import net.blockcade.Arcade.Managers.BlockManager;
 import net.blockcade.Arcade.Managers.EntityManager;
 import net.blockcade.Arcade.Managers.EventManager.GameRegisterEvent;
@@ -75,6 +76,9 @@ public class Game {
     // ScoreboardManager
     private ScoreboardManager scoreboardManager;
 
+    // Achievement Manager
+    private AchievementManager achievementManager;
+
     // Default map for game
     private World map;
 
@@ -116,6 +120,7 @@ public class Game {
         this.entityManager = new EntityManager(this);
         this.teamManager = new TeamManager(this);
         this.blockManager = new BlockManager(this);
+        this.achievementManager = new AchievementManager();
         map.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS,false);
         Main.game=this;
         new ErrorCatcher(this);
@@ -347,6 +352,13 @@ public class Game {
     public BlockManager BlockManager() {
         return this.blockManager;
     }
+
+    /**
+     * Get AchievementManager instance {@link AchievementManager} requires {@link GameModule#ACHIEVEMENTS}
+     * @return AchievementManager instance
+     * @since 31/02/2020
+     */
+    public AchievementManager AchievementManager() { return this.achievementManager; }
 
     /**
      * Set Max Damage Height for the server requires {@link GameModule#MAX_DAMAGE_HEIGHT}

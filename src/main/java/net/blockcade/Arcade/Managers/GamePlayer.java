@@ -15,6 +15,7 @@ package net.blockcade.Arcade.Managers;
 
 import net.blockcade.Arcade.Game;
 import net.blockcade.Arcade.Main;
+import net.blockcade.Arcade.Managers.AdvancementManager.Achievement;
 import net.blockcade.Arcade.Managers.EventManager.PlayerCombatLogEvent;
 import net.blockcade.Arcade.Managers.EventManager.PlayerDeathEvent;
 import net.blockcade.Arcade.Utils.Formatting.Text;
@@ -39,6 +40,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
@@ -64,7 +66,6 @@ public class GamePlayer implements Listener {
     private int CORE_deaths = 0;
 
     private long experience = 0;
-    private int level = 0;
 
     private int killstreak = 0;
     private int highest_killstreak = 0;
@@ -80,6 +81,8 @@ public class GamePlayer implements Listener {
     private TeamColors team=null;
 
     private boolean eliminate=false;
+
+    private ArrayList<Achievement> achievements = new ArrayList<>();
 
     public GamePlayer(Game game, boolean independent){
         this.game=game;
@@ -104,30 +107,32 @@ public class GamePlayer implements Listener {
         }.runTaskAsynchronously(game.handler());
     }
 
+    /**
+     * Check if player is currently in combat with another player
+     * @return boolean stating player combat status
+     */
     public boolean isCombat() { return !((last_combat-System.currentTimeMillis())<-10000);}
+    /**
+     * Check time remaining until player is no longer in combat
+     * @return Milliseconds remaining
+     */
     public long getCombatTime() {return isCombat()?(10000+(last_combat-System.currentTimeMillis())):0;}
+    /**
+     * Check the last player in combat
+     * @return GamePlayer from last combat
+     */
     public GamePlayer getCombatPlayer() {return last_combat_player;}
 
+    /**
+     * Check player (Network) uuid
+     * @return Player UUID object
+     */
     public UUID getUuid() {
         return uuid;
     }
 
-    public int getLevel() {
-        return this.level;
-    }
-    public void setLevel(int level) {
-        this.level=level;
-    }
-
-    public long getExperience() {
-        return experience;
-    }
-
-    public void setExperience(long experience) {
-        this.experience = experience;
-    }
-
     public void addExp(int amount){
+        checkLevelup(amount);
         this.experience=experience+amount;
     }
 
@@ -240,6 +245,38 @@ public class GamePlayer implements Listener {
     public void teleport(World world, double x, double y, double z){teleport(new Location(world,x,y,z));}
     public void teleport(Location location){this.player.teleport(location);}
 
+    /**
+     * Get player network-wide level
+     * @return Player network wide level
+     */
+    public double getLevel() {
+        return (int) (Math.floor(25 + Math.sqrt(725 * experience))/50);
+    }
+    public void checkLevelup(int experience){
+        if(getLevel()!=((int) (Math.floor(25 + Math.sqrt(625 + 100 * experience+this.experience))/50))){
+            // Player levelled up
+            player.playSound(player.getLocation(),Sound.ENTITY_PLAYER_LEVELUP,0.5f,0.5f);
+            sendMessage("&a&k]&r&m&a========⛃ &d&lLevel up! &m&a⛃========&a&k[&r\n" +
+                    "\n" +
+                    "&7");
+        }
+    }
+    public int getExpToNextLevel() {
+        int L = (int)getLevel()+1;
+        return 25 * L * L - 25 * L;
+    }
+
+    public int getExperience() {
+        return (int)experience;
+    }
+
+    public void giveAchievement(Achievement achievement){
+        achievements.add(achievement);
+    }
+    public boolean hasAchieved(Achievement achievement){
+        return achievements.contains(achievement);
+    }
+
     public boolean hasStatistic(GameName game){
         ResultSet r = Main.getSqlConnection().query(String.format("SELECT * FROM `player_statistics` WHERE `player_uuid`='%s' AND `game_enum`='%s' LIMIT 1;", player.getUniqueId(), game.name()));
         try {
@@ -284,7 +321,7 @@ public class GamePlayer implements Listener {
             while(results.next()){
                 this.name=results.getString("username");
                 this.rank=(Ranks.valueOf(results.getString("rank").toUpperCase()));
-                this.level=results.getInt("level");
+                this.experience=results.getInt("experience");
                 this.uuid=(UUID.fromString(results.getString("uuid")));
 
                 // TODO Hook into Spigot and override player UUID
@@ -330,4 +367,5 @@ public class GamePlayer implements Listener {
         if(!GamePlayers.containsKey(player))return new GamePlayer(player);
         return GamePlayers.get(player);
     }
+
 }
