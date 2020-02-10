@@ -43,6 +43,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
+import java.util.UUID;
 
 import static org.bukkit.entity.EntityType.ITEM_FRAME;
 import static org.bukkit.entity.EntityType.PLAYER;
@@ -51,6 +52,9 @@ public class Game {
 
     // Game Title
     private String title;
+
+    // Game UUID
+    private UUID uuid;
 
     // Game Type
     private GameType gameType;
@@ -116,6 +120,7 @@ public class Game {
         this.gameModules = new ArrayList<>();
         this.gameState = GameState.DISABLED;
         this.AutoStart = true;
+        this.uuid = UUID.randomUUID();
         this.map = map;
         this.entityManager = new EntityManager(this);
         this.teamManager = new TeamManager(this);
@@ -178,6 +183,14 @@ public class Game {
      */
     public GameType GameType() {
         return gameType;
+    }
+
+    /**
+     * Get game Unique Identifier
+     * @return UUID
+     */
+    public UUID getUuid() {
+        return uuid;
     }
 
     /**

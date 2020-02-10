@@ -19,6 +19,7 @@ public enum Ranks {
         SUPER(1,"&a&l"),
         MEGA(2,"&b&l"),
         ULTRA(3,"&d&l"),
+        IMPERIAL(4,"&e&l"),
         MEDIA(10,"&6&l"),
         HELPER(50, "&9&l"),
         ADMIN(85,"&c&l");
