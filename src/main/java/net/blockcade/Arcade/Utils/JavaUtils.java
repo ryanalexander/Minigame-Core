@@ -14,6 +14,7 @@
 
 package net.blockcade.Arcade.Utils;
 
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -67,7 +68,9 @@ public class JavaUtils {
         }
         return (buff.toString());
     }
-
+    public static boolean isNumber(String s) {
+        return s.matches("^[0-9]+$");
+    }
     public static BlockFace direction(Float heading)
     {
         BlockFace strHeading = BlockFace.NORTH;
