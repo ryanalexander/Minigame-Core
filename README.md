@@ -1,3 +1,3 @@
 # Arcade
 
-Game core, you will need this to create games
+Decommissioned blockcade Minigame core
