@@ -45,22 +45,14 @@ public class MCTInstance {
         inv.clear();
         if (this.team == null) {
             Item cancel = new Item(Material.BARRIER, "&cLeave MCT");
-            cancel.setOnClick(new Item.click() {
-                @Override
-                public void run(Player param1Player) {
-                    MCTInstance.this.leave();
-                }
-            });
+            cancel.setOnClick(p -> MCTInstance.this.leave());
             for (TeamColors color : TeamColors.values()) {
                 Item item = new Item(Material.valueOf(color.getTranslation().toUpperCase() + "_WOOL"), color.getChatColor() + color.name());
-                item.setOnClick(new Item.click() {
-                    @Override
-                    public void run(Player player) {
-                        player.sendMessage(Text.format(String.format("&aMCT> &7Team color has been set to " + color.getChatColor() + color.name())));
-                        MCTInstance.this.team = color;
+                item.setOnClick(player -> {
+                    player.sendMessage(Text.format("&aMCT> &7Team color has been set to " + color.getChatColor() + color.name()));
+                    MCTInstance.this.team = color;
 
-                        MCTInstance.this.buildMenu();
-                    }
+                    MCTInstance.this.buildMenu();
                 });
                 this.inv.addItem(item.spigot());
             }
@@ -73,48 +65,30 @@ public class MCTInstance {
 
             Item cancel = new Item(Material.BARRIER, "&cReturn to Team selector");
 
-            spawn.setOnClick(new Item.click() {
-                @Override
-                public void run(Player p) {
-                    p.sendMessage(Text.format(String.format("&aMCT> &7You have set %s&7's SPAWN location.", MCTInstance.this.team.getChatColor() + MCTInstance.this.team.name())));
-                    setLocation("spawn", p.getLocation());
-                }
+            spawn.setOnClick(p -> {
+                p.sendMessage(Text.format(String.format("&aMCT> &7You have set %s&7's SPAWN location.", MCTInstance.this.team.getChatColor() + MCTInstance.this.team.name())));
+                setLocation("spawn", p.getLocation());
             });
-            bed.setOnClick(new Item.click() {
-                @Override
-                public void run(Player p) {
-                    p.sendMessage(Text.format(String.format("&aMCT> &7You have set %s&7's BED location.", MCTInstance.this.team.getChatColor() + MCTInstance.this.team.name())));
-                    setLocation("bed", p.getLocation());
-                }
+            bed.setOnClick(p -> {
+                p.sendMessage(Text.format(String.format("&aMCT> &7You have set %s&7's BED location.", MCTInstance.this.team.getChatColor() + MCTInstance.this.team.name())));
+                setLocation("bed", p.getLocation());
             });
-            tshop.setOnClick(new Item.click() {
-                @Override
-                public void run(Player p) {
-                    p.sendMessage(Text.format(String.format("&aMCT> &7You have set %s&7's Team SHOP location.", MCTInstance.this.team.getChatColor() + MCTInstance.this.team.name())));
-                    setLocation("team_shop", p.getLocation());
-                }
+            tshop.setOnClick(p -> {
+                p.sendMessage(Text.format(String.format("&aMCT> &7You have set %s&7's Team SHOP location.", MCTInstance.this.team.getChatColor() + MCTInstance.this.team.name())));
+                setLocation("team_shop", p.getLocation());
             });
-            shop.setOnClick(new Item.click() {
-                @Override
-                public void run(Player p) {
-                    p.sendMessage(Text.format(String.format("&aMCT> &7You have set %s&7's SHOP location.", MCTInstance.this.team.getChatColor() + MCTInstance.this.team.name())));
-                    setLocation("shop", p.getLocation());
-                }
+            shop.setOnClick(p -> {
+                p.sendMessage(Text.format(String.format("&aMCT> &7You have set %s&7's SHOP location.", MCTInstance.this.team.getChatColor() + MCTInstance.this.team.name())));
+                setLocation("shop", p.getLocation());
             });
-            forge.setOnClick(new Item.click() {
-                @Override
-                public void run(Player p) {
-                    p.sendMessage(Text.format(String.format("&aMCT> &7You have set %s&7's FORGE location.", MCTInstance.this.team.getChatColor() + MCTInstance.this.team.name())));
-                    setLocation("forge", p.getLocation());
-                }
+            forge.setOnClick(p -> {
+                p.sendMessage(Text.format(String.format("&aMCT> &7You have set %s&7's FORGE location.", MCTInstance.this.team.getChatColor() + MCTInstance.this.team.name())));
+                setLocation("forge", p.getLocation());
             });
 
-            cancel.setOnClick(new Item.click() {
-                @Override
-                public void run(Player p) {
-                    MCTInstance.this.team = null;
-                    buildMenu();
-                }
+            cancel.setOnClick(p -> {
+                MCTInstance.this.team = null;
+                buildMenu();
             });
 
             this.inv.addItem(spawn.spigot());

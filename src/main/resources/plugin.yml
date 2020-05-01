@@ -9,7 +9,3 @@ commands:
     description: Map Creator Tools
   debug:
     description: Debugging command
-loadbefore:
-  - PIT
-  - BedBattles
-  - CTF

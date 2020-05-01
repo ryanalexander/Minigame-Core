@@ -14,7 +14,6 @@
 
 package net.blockcade.Arcade.Utils;
 
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

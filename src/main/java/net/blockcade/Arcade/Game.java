@@ -471,9 +471,9 @@ public class Game {
     private void updateGamerules() {
         switch(GameType()){
             case CUSTOM:
-                for(GameModule module:GameModule.values()){setModule(module,false);}
+                for(GameModule module:GameModule.values())setModule(module,false);
             case DESTROY:
-                for(GameModule module:GameModule.values()){setModule(module,true);}
+                for(GameModule module:GameModule.values())setModule(module,true);
                 break;
             case CAPTURE:
                 setModule(GameModule.DEATH_MANAGER,true);
